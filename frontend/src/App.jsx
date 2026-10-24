@@ -5,7 +5,8 @@ import {
   RefreshCcw, ShieldCheck, Workflow, XCircle
 } from "lucide-react";
 import { engineeringChange, engineeringParts, plmParts, product } from "./demoData";
-import { humanize, validateProduct } from "./validation";
+import { humanize } from "./validation";
+import { executeValidation } from "./api";
 
 const steps = [
   [Boxes, "Engineering Source", "The latest product structure, part revisions, quantities and lifecycle state."],
@@ -20,13 +21,19 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const plmMap = useMemo(() => new Map(plmParts.map((p) => [p.partNumber, p])), []);
 
-  const runValidation = () => {
+  const runValidation = async () => {
     setRunning(true);
-    setTimeout(() => {
-      setValidation(validateProduct(engineeringParts, plmParts));
+
+    try {
+      const data = await executeValidation();
+      setValidation(data);
       setActiveTab("validation");
+    } catch (error) {
+      console.error("FastAPI validation error:", error);
+      alert("Could not connect to the FastAPI backend.");
+    } finally {
       setRunning(false);
-    }, 650);
+    }
   };
 
   return (
