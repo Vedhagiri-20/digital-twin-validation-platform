@@ -8,6 +8,9 @@ import { engineeringChange, engineeringParts, plmParts, product } from "./demoDa
 import { humanize } from "./validation";
 import { executeValidation, loadProductData } from "./api";
 
+import ValidationInputLab from "./components/ValidationInputLab";
+import ValidationExports from "./components/ValidationExports";
+import LiveBomComparison from "./components/LiveBomComparison";
 const steps = [
   [Boxes, "Engineering Source", "The latest product structure, part revisions, quantities and lifecycle state."],
   [Workflow, "Integration / Sync", "Product data moves to PLM through APIs, integrations or scheduled synchronization."],
@@ -72,7 +75,21 @@ export default function App() {
         <nav className="nav-links">
           <a href="#how-it-works">How it works</a>
           <a href="#demo">Live demo</a>
-          <a href="#architecture">Architecture</a>
+          <button
+              type="button"
+              className="nav-link-button"
+              onClick={() =>
+                window.alert(`SYSTEM ARCHITECTURE
+
+React Frontend
+→ FastAPI Validation Service
+→ PostgreSQL / Neon
+
+Engineering/CAD and PLM inputs are compared for missing parts, revision, quantity, and lifecycle mismatches.`)
+              }
+            >
+              Architecture
+            </button>
           <a className="github-link" href="https://github.com/Vedhagiri-20/digital-twin-validation-platform" target="_blank" rel="noreferrer"><Github size={17}/>GitHub</a>
         </nav>
       </header>
@@ -131,9 +148,26 @@ export default function App() {
               ))}
             </aside>
             <div className="workspace-content">
-              {activeTab === "overview" && <Overview validation={validation} runValidation={runValidation} productData={liveProduct} engineeringPartsData={liveEngineeringParts} engineeringChangeData={liveEngineeringChange}/>} 
-              {activeTab === "bom" && <BomComparison plmMap={plmMap} engineeringPartsData={liveEngineeringParts}/>} 
-              {activeTab === "validation" && <ValidationView validation={validation} runValidation={runValidation}/>} 
+              {activeTab === "overview" && (
+                <>
+                  <Overview validation={validation} runValidation={runValidation} productData={liveProduct} engineeringPartsData={liveEngineeringParts} engineeringChangeData={liveEngineeringChange}/>
+                  <ValidationInputLab
+                  initialEngineering={liveEngineeringParts}
+                  initialPlm={livePlmParts}
+                  onValidated={(data) => {
+                    setValidation(data);
+                    setActiveTab("validation");
+                  }}
+                />
+                </>
+              )} 
+              {activeTab === "bom" && <LiveBomComparison />} 
+              {activeTab === "validation" && (
+                <>
+                  <ValidationView validation={validation} runValidation={runValidation}/>
+                  <ValidationExports />
+                </>
+              )}
               {activeTab === "defects" && <DefectsView validation={validation} runValidation={runValidation}/>} 
             </div>
           </div>

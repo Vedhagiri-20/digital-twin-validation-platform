@@ -104,3 +104,55 @@ export async function executeValidation(productId = 1) {
       })),
   };
 }
+
+export async function executeCustomValidation(engineeringParts, plmParts) {
+  const payload = {
+    engineering_parts: engineeringParts.map((part) => ({
+      part_number: part.partNumber.trim(),
+      name: part.name.trim(),
+      revision: part.revision.trim(),
+      quantity: Number(part.quantity),
+      lifecycle: part.lifecycle.trim(),
+    })),
+    plm_parts: plmParts.map((part) => ({
+      part_number: part.partNumber.trim(),
+      name: part.name.trim(),
+      revision: part.revision.trim(),
+      quantity: Number(part.quantity),
+      lifecycle: part.lifecycle.trim(),
+    })),
+  };
+
+  const data = await request("/custom-validation", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return {
+    summary: {
+      partsChecked: data.parts_checked,
+      passedParts: data.passed_parts,
+      failedParts: data.failed_parts,
+      passRate: data.pass_rate,
+    },
+    results: data.results.map((item) => ({
+      partNumber: item.part_number,
+      partName: item.part_name,
+      status: item.status,
+      issueType: item.issue_type,
+      expected: item.expected,
+      actual: item.actual,
+      severity: item.severity,
+    })),
+    defects: data.defects.map((item) => ({
+      id: item.id,
+      partNumber: item.part_number,
+      title: item.title,
+      issueType: item.issue_type,
+      severity: item.severity,
+      status: item.status,
+      expected: item.expected,
+      actual: item.actual,
+    })),
+  };
+}

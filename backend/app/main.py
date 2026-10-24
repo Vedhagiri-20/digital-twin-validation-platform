@@ -2,6 +2,7 @@ import os
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from pydantic import BaseModel, Field
 
 from .database import Base, engine, get_db
 from .models import Defect, EngineeringChange, EngineeringPart, PLMPart, Product, ValidationResult
@@ -106,4 +107,132 @@ def dashboard(db: Session = Depends(get_db)):
         "passed_checks": passed,
         "failed_checks": failed,
         "open_defects": open_defects,
+    }
+
+
+# === CUSTOM VALIDATION WORKSPACE ===
+
+class CustomPartInput(BaseModel):
+    part_number: str = Field(min_length=1, max_length=80)
+    name: str = Field(default="", max_length=200)
+    revision: str = Field(min_length=1, max_length=20)
+    quantity: int = Field(ge=0)
+    lifecycle: str = Field(min_length=1, max_length=40)
+
+
+class CustomValidationRequest(BaseModel):
+    engineering_parts: list[CustomPartInput]
+    plm_parts: list[CustomPartInput]
+
+
+@app.post("/custom-validation")
+def validate_custom(payload: CustomValidationRequest):
+    plm_map = {
+        part.part_number.strip().upper(): part
+        for part in payload.plm_parts
+    }
+
+    results = []
+    defects = []
+    passed_parts = 0
+    failed_parts = 0
+    defect_number = 1
+
+    def fail(part, issue_type, expected, actual, severity):
+        nonlocal defect_number
+
+        results.append({
+            "part_number": part.part_number,
+            "part_name": part.name,
+            "status": "FAIL",
+            "issue_type": issue_type,
+            "expected": str(expected),
+            "actual": str(actual),
+            "severity": severity,
+        })
+
+        defects.append({
+            "id": f"TEST-DEF-{1000 + defect_number}",
+            "part_number": part.part_number,
+            "title": f"{issue_type.replace('_', ' ').title()}: {part.part_number}",
+            "issue_type": issue_type,
+            "severity": severity,
+            "status": "OPEN",
+            "expected": str(expected),
+            "actual": str(actual),
+        })
+
+        defect_number += 1
+
+    for engineering in payload.engineering_parts:
+        key = engineering.part_number.strip().upper()
+        plm = plm_map.get(key)
+        part_failed = False
+
+        if plm is None:
+            fail(
+                engineering,
+                "MISSING_IN_PLM",
+                "Part exists in PLM",
+                "Part missing",
+                "HIGH",
+            )
+            failed_parts += 1
+            continue
+
+        if engineering.revision.strip().upper() != plm.revision.strip().upper():
+            part_failed = True
+            fail(
+                engineering,
+                "REVISION_MISMATCH",
+                engineering.revision,
+                plm.revision,
+                "HIGH",
+            )
+
+        if engineering.quantity != plm.quantity:
+            part_failed = True
+            fail(
+                engineering,
+                "QUANTITY_MISMATCH",
+                engineering.quantity,
+                plm.quantity,
+                "MEDIUM",
+            )
+
+        if engineering.lifecycle.strip().upper() != plm.lifecycle.strip().upper():
+            part_failed = True
+            fail(
+                engineering,
+                "LIFECYCLE_MISMATCH",
+                engineering.lifecycle,
+                plm.lifecycle,
+                "MEDIUM",
+            )
+
+        if part_failed:
+            failed_parts += 1
+        else:
+            passed_parts += 1
+            results.append({
+                "part_number": engineering.part_number,
+                "part_name": engineering.name,
+                "status": "PASS",
+                "issue_type": "",
+                "expected": "",
+                "actual": "",
+                "severity": "LOW",
+            })
+
+    parts_checked = len(payload.engineering_parts)
+
+    return {
+        "parts_checked": parts_checked,
+        "passed_parts": passed_parts,
+        "failed_parts": failed_parts,
+        "pass_rate": round((passed_parts / parts_checked) * 100, 1)
+        if parts_checked
+        else 0.0,
+        "results": results,
+        "defects": defects,
     }
