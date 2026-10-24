@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Activity, AlertTriangle, ArrowRight, Boxes, CheckCircle2, ChevronRight,
   CircleDot, Code2, Database, GitCompareArrows, Github, Layers3, Play,
@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { engineeringChange, engineeringParts, plmParts, product } from "./demoData";
 import { humanize } from "./validation";
-import { executeValidation } from "./api";
+import { executeValidation, loadProductData } from "./api";
 
 const steps = [
   [Boxes, "Engineering Source", "The latest product structure, part revisions, quantities and lifecycle state."],
@@ -19,13 +19,39 @@ export default function App() {
   const [validation, setValidation] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [running, setRunning] = useState(false);
-  const plmMap = useMemo(() => new Map(plmParts.map((p) => [p.partNumber, p])), []);
+  const [productId, setProductId] = useState(1);
+  const [liveProduct, setLiveProduct] = useState(product);
+  const [liveEngineeringParts, setLiveEngineeringParts] = useState(engineeringParts);
+  const [livePlmParts, setLivePlmParts] = useState(plmParts);
+  const [liveEngineeringChange, setLiveEngineeringChange] = useState(engineeringChange);
+
+  const plmMap = useMemo(
+    () => new Map(livePlmParts.map((p) => [p.partNumber, p])),
+    [livePlmParts]
+  );
+  useEffect(() => {
+    loadProductData()
+      .then((data) => {
+        setProductId(data.productId);
+        setLiveProduct(data.product);
+        setLiveEngineeringParts(data.engineeringParts);
+        setLivePlmParts(data.plmParts);
+
+        if (data.engineeringChange) {
+          setLiveEngineeringChange(data.engineeringChange);
+        }
+      })
+      .catch((error) => {
+        console.error("Unable to load backend product data:", error);
+      });
+  }, []);
+
 
   const runValidation = async () => {
     setRunning(true);
 
     try {
-      const data = await executeValidation();
+      const data = await executeValidation(productId);
       setValidation(data);
       setActiveTab("validation");
     } catch (error) {
@@ -65,9 +91,9 @@ export default function App() {
           </div>
 
           <div className="hero-visual">
-            <SystemCard label="ENGINEERING SOURCE" motor="REV C" bearing="QTY 2" />
+            <SystemCard label="ENGINEERING SOURCE" motor="REV C" bearing="QTY 2" productData={liveProduct} />
             <div className="flow-line"><span/><GitCompareArrows size={24}/><span/></div>
-            <SystemCard label="PLM REPRESENTATION" motor="REV B" bearing="QTY 1" warning />
+            <SystemCard label="PLM REPRESENTATION" motor="REV B" bearing="QTY 1" warning productData={liveProduct} />
             <div className="detected-badge"><AlertTriangle size={17}/>Validation finds the mismatch</div>
           </div>
         </section>
@@ -105,8 +131,8 @@ export default function App() {
               ))}
             </aside>
             <div className="workspace-content">
-              {activeTab === "overview" && <Overview validation={validation} runValidation={runValidation}/>} 
-              {activeTab === "bom" && <BomComparison plmMap={plmMap}/>} 
+              {activeTab === "overview" && <Overview validation={validation} runValidation={runValidation} productData={liveProduct} engineeringPartsData={liveEngineeringParts} engineeringChangeData={liveEngineeringChange}/>} 
+              {activeTab === "bom" && <BomComparison plmMap={plmMap} engineeringPartsData={liveEngineeringParts}/>} 
               {activeTab === "validation" && <ValidationView validation={validation} runValidation={runValidation}/>} 
               {activeTab === "defects" && <DefectsView validation={validation} runValidation={runValidation}/>} 
             </div>
@@ -133,23 +159,23 @@ export default function App() {
   );
 }
 
-function SystemCard({label,motor,bearing,warning=false}) {
-  return <div className="system-card"><span className="system-label">{label}</span><strong>{product.code}</strong><p>{product.name}</p><div className={`mini-row ${warning?"warning":""}`}><span>MOTOR-001</span><b>{motor}</b></div><div className={`mini-row ${warning?"warning":""}`}><span>BEARING-004</span><b>{bearing}</b></div></div>;
+function SystemCard({label,motor,bearing,warning=false,productData}) {
+  return <div className="system-card"><span className="system-label">{label}</span><strong>{productData.code}</strong><p>{productData.name}</p><div className={`mini-row ${warning?"warning":""}`}><span>MOTOR-001</span><b>{motor}</b></div><div className={`mini-row ${warning?"warning":""}`}><span>BEARING-004</span><b>{bearing}</b></div></div>;
 }
 
-function Overview({validation,runValidation}) {
+function Overview({validation,runValidation,productData,engineeringPartsData,engineeringChangeData}) {
   const summary = validation?.summary;
-  const metrics = [["Product",product.code],["BOM parts",engineeringParts.length],["Open ECO",engineeringChange.id],["Validation",validation?`${summary.passRate}% pass`:"Not run"]];
+  const metrics = [["Product",productData.code],["BOM parts",engineeringPartsData.length],["Open ECO",engineeringChangeData.id],["Validation",validation?`${summary.passRate}% pass`:"Not run"]];
   return <div>
-    <div className="workspace-title"><div><span>DEMO PRODUCT</span><h3>{product.code} · {product.name}</h3><p>{product.description}</p></div><span className="status-chip">MODEL ACTIVE</span></div>
+    <div className="workspace-title"><div><span>DEMO PRODUCT</span><h3>{productData.code} · {productData.name}</h3><p>{productData.description}</p></div><span className="status-chip">MODEL ACTIVE</span></div>
     <div className="metrics-grid">{metrics.map(([label,value]) => <div className="metric-card" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
-    <div className="eco-card"><div><span className="eco-label">ENGINEERING CHANGE</span><strong>{engineeringChange.id}</strong></div><p>{engineeringChange.partNumber}: Revision {engineeringChange.fromRevision} → {engineeringChange.toRevision}</p><span>{engineeringChange.reason}</span><b>{engineeringChange.status}</b></div>
+    <div className="eco-card"><div><span className="eco-label">ENGINEERING CHANGE</span><strong>{engineeringChangeData.id}</strong></div><p>{engineeringChangeData.partNumber}: Revision {engineeringChangeData.fromRevision} → {engineeringChangeData.toRevision}</p><span>{engineeringChangeData.reason}</span><b>{engineeringChangeData.status}</b></div>
     {!validation && <Empty icon={GitCompareArrows} title="Ready to compare Engineering vs. PLM" text="Run the validation engine to check part revisions, quantities, lifecycle states and missing components." action={runValidation}/>} 
   </div>;
 }
 
-function BomComparison({plmMap}) {
-  return <div><div className="workspace-title"><div><span>BILL OF MATERIALS</span><h3>Engineering vs. PLM comparison</h3><p>The Engineering source is treated as the expected product definition for this educational validation scenario.</p></div></div><div className="table-wrap"><table><thead><tr><th>Part</th><th>Engineering</th><th>PLM</th><th>Data state</th></tr></thead><tbody>{engineeringParts.map((part)=>{const plm=plmMap.get(part.partNumber);const mismatch=!plm||part.revision!==plm.revision||part.quantity!==plm.quantity||part.lifecycle!==plm.lifecycle;return <tr key={part.partNumber}><td><strong>{part.partNumber}</strong><small>{part.name}</small></td><td>Rev {part.revision} · Qty {part.quantity}<small>{part.lifecycle}</small></td><td>{plm?<><span>Rev {plm.revision} · Qty {plm.quantity}</span><small>{plm.lifecycle}</small></>:<span className="missing">Missing</span>}</td><td><span className={mismatch?"result fail":"result pass"}>{mismatch?<XCircle size={15}/>:<CheckCircle2 size={15}/>} {mismatch?"Mismatch":"Aligned"}</span></td></tr>})}</tbody></table></div></div>;
+function BomComparison({plmMap,engineeringPartsData}) {
+  return <div><div className="workspace-title"><div><span>BILL OF MATERIALS</span><h3>Engineering vs. PLM comparison</h3><p>The Engineering source is treated as the expected product definition for this educational validation scenario.</p></div></div><div className="table-wrap"><table><thead><tr><th>Part</th><th>Engineering</th><th>PLM</th><th>Data state</th></tr></thead><tbody>{engineeringPartsData.map((part)=>{const plm=plmMap.get(part.partNumber);const mismatch=!plm||part.revision!==plm.revision||part.quantity!==plm.quantity||part.lifecycle!==plm.lifecycle;return <tr key={part.partNumber}><td><strong>{part.partNumber}</strong><small>{part.name}</small></td><td>Rev {part.revision} · Qty {part.quantity}<small>{part.lifecycle}</small></td><td>{plm?<><span>Rev {plm.revision} · Qty {plm.quantity}</span><small>{plm.lifecycle}</small></>:<span className="missing">Missing</span>}</td><td><span className={mismatch?"result fail":"result pass"}>{mismatch?<XCircle size={15}/>:<CheckCircle2 size={15}/>} {mismatch?"Mismatch":"Aligned"}</span></td></tr>})}</tbody></table></div></div>;
 }
 
 function ValidationView({validation,runValidation}) {

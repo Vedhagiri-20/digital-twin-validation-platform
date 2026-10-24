@@ -1,4 +1,5 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -16,20 +17,56 @@ async function request(path, options = {}) {
   return response.json();
 }
 
-export async function executeValidation() {
-  // Make sure demo product exists first.
+function normalizePart(part) {
+  return {
+    partNumber: part.part_number,
+    name: part.name,
+    revision: part.revision,
+    quantity: part.quantity,
+    lifecycle: part.lifecycle,
+  };
+}
+
+export async function loadProductData() {
   const seed = await request("/seed", {
     method: "POST",
   });
 
-  const productId = seed.product_id;
+  const data = await request(`/products/${seed.product_id}`);
 
-  // Run backend validation.
+  const change = data.engineering_changes?.[0];
+
+  return {
+    productId: seed.product_id,
+
+    product: {
+      code: data.product.code,
+      name: data.product.name,
+      description: data.product.description,
+    },
+
+    engineeringParts: data.engineering_parts.map(normalizePart),
+
+    plmParts: data.plm_parts.map(normalizePart),
+
+    engineeringChange: change
+      ? {
+          id: change.change_number,
+          partNumber: change.part_number,
+          fromRevision: change.from_revision,
+          toRevision: change.to_revision,
+          reason: change.reason,
+          status: change.status,
+        }
+      : null,
+  };
+}
+
+export async function executeValidation(productId = 1) {
   const summary = await request(`/validate/${productId}`, {
     method: "POST",
   });
 
-  // Load backend-generated results and defects.
   const results = await request("/validation-results");
   const defects = await request("/defects");
 

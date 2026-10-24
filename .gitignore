@@ -17,3 +17,19 @@ dist/
 
 # VS Code
 .vscode/
+
+# Local databases
+*.db
+
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Development backups
+*.backup
+*.before-api
+*.before-fastapi
+*.before-live-backend
+*.pre-api.backup
+*.pre-domain.backup
