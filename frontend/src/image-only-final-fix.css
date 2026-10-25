@@ -1,0 +1,55 @@
+/* ONLY FIX THE CAD / PLM IMAGE AREA */
+
+.validation-card__visual,
+.validation-section-card__visual,
+.dataset-card__visual,
+.validation-card__hero {
+  background-image: url("/images/cad-plm-comparison.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+
+  opacity: 1 !important;
+  filter: none !important;
+
+  min-height: 190px !important;
+}
+
+/* REMOVE ONLY THE IMAGE WASH / OVERLAY */
+.validation-card__visual-overlay,
+.validation-card__overlay,
+.validation-section-card__overlay,
+.dataset-card__overlay {
+  background: rgba(0, 0, 0, 0.08) !important;
+  opacity: 1 !important;
+}
+
+/* If an old pseudo overlay is sitting over the image */
+.validation-card__visual::before,
+.validation-card__visual::after,
+.validation-section-card__visual::before,
+.validation-section-card__visual::after,
+.dataset-card__visual::before,
+.dataset-card__visual::after {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Keep only the title readable on top of the image */
+.validation-card__visual-content,
+.validation-section-card__visual-content,
+.dataset-card__visual-content {
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.validation-card__visual-content h2,
+.validation-card__visual-content h3,
+.validation-card__visual-content p,
+.validation-section-card__visual-content h2,
+.validation-section-card__visual-content h3,
+.validation-section-card__visual-content p {
+  text-shadow:
+    0 2px 5px rgba(0,0,0,.95),
+    0 4px 14px rgba(0,0,0,.8) !important;
+}

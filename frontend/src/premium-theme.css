@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600;6..96,700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --charcoal: #171717;
+  --forest: #06110C;
+  --forest-light: #0D261B;
+  --crimson: #A31C1B;
+  --ivory: #F3EFE7;
+  --muted: #9A9F9B;
+  --border: #303833;
+}
+
+/* GLOBAL */
+html,
+body,
+#root {
+  background: #171717 !important;
+  color: var(--ivory) !important;
+  font-family: "Inter", sans-serif !important;
+}
+
+/* MAIN TITLES */
+h1,
+h2,
+h3,
+.page-title,
+.hero-title,
+.section-title {
+  font-family: "Bodoni Moda", Georgia, serif !important;
+  color: var(--ivory) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.03em !important;
+}
+
+/* BODY / UI */
+p,
+span,
+label,
+button,
+input,
+select,
+textarea,
+table,
+a {
+  font-family: "Inter", sans-serif !important;
+}
+
+/* HEADER */
+header,
+.site-header,
+.topbar,
+.navbar {
+  background: #06110C !important;
+  border-bottom: 1px solid #27342E !important;
+}
+
+/* MAIN PANELS */
+.panel,
+.card,
+.input-lab,
+.live-bom,
+.validation-export-bar,
+.workspace-shell {
+  background: #171717 !important;
+  border-color: #303833 !important;
+}
+
+/* INNER CARDS */
+.metric-card,
+.summary-card,
+.stat-card,
+.overview-card {
+  background: #1D1D1D !important;
+  border: 1px solid #303833 !important;
+}
+
+/* ACTIVE / GREEN */
+.primary-button,
+button.primary {
+  background: #0D261B !important;
+  border: 1px solid #426B58 !important;
+  color: #F3EFE7 !important;
+}
+
+.primary-button:hover,
+button.primary:hover {
+  background: #123526 !important;
+}
+
+/* ACTIVE TAB */
+.tab.active,
+.nav-tab.active,
+.workspace-tab.active,
+button[class*="tab"].active {
+  background: #0D261B !important;
+  color: #F3EFE7 !important;
+  border-color: #426B58 !important;
+}
+
+/* DEFECT / MISMATCH / HIGH */
+.mismatch,
+.status-fail,
+.severity-high,
+.badge-high,
+.live-bom-state.mismatch {
+  color: #E5726E !important;
+}
+
+.row-delete-button {
+  background: #2C1515 !important;
+  border-color: #73302E !important;
+  color: #E5726E !important;
+}
+
+/* PASS */
+.status-pass,
+.badge-pass,
+.live-bom-state.aligned {
+  color: #8DB7A0 !important;
+}
+
+/* INPUTS */
+input,
+select,
+textarea {
+  background: #111311 !important;
+  color: #F3EFE7 !important;
+  border: 1px solid #343C37 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #638575 !important;
+  outline: none !important;
+}
+
+/* TABLES */
+table th {
+  background: #06110C !important;
+  color: #8F9993 !important;
+}
+
+table td {
+  background: #171717 !important;
+  border-color: #303833 !important;
+}
+
+/* SMALL ENGINEERING LABELS */
+[class*="kicker"],
+.eyebrow,
+.overline {
+  color: #7FA896 !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+/* EXPORT BUTTONS */
+.validation-export-actions button {
+  background: #1E211F !important;
+  border: 1px solid #3B4540 !important;
+  color: #D6DAD7 !important;
+  border-radius: 4px !important;
+  padding: 9px 15px !important;
+}
+
+.validation-export-actions button:hover {
+  background: #0D261B !important;
+  border-color: #547966 !important;
+  color: #F3EFE7 !important;
+}
+
+/* CRIMSON ACCENT — use sparingly */
+.crimson-accent {
+  color: #A31C1B !important;
+}
+
+/* SELECTION */
+::selection {
+  background: #A31C1B;
+  color: #F3EFE7;
+}

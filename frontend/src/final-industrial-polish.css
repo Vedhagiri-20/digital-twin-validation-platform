@@ -1,0 +1,386 @@
+
+/* ========================================================
+   DIGITAL TWIN — FINAL INDUSTRIAL POLISH
+   ======================================================== */
+
+:root {
+  --industry-black: #000000;
+  --industry-charcoal: #171717;
+  --industry-forest: #06110C;
+  --industry-green: #5FAE91;
+  --industry-crimson: #A31C1B;
+
+  --industry-ivory: #F3EFE7;
+  --industry-panel: #F1EEE7;
+  --industry-panel-2: #E7E3DA;
+
+  --industry-ink: #171717;
+  --industry-muted: #626762;
+}
+
+
+/* ========================================================
+   HERO — EXACT COLOR HIERARCHY REQUESTED
+   ======================================================== */
+
+.industrial-hero-title {
+  max-width: 1100px !important;
+
+  margin: 0 0 24px !important;
+
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+
+  font-size: clamp(54px, 5.3vw, 84px) !important;
+  font-weight: 600 !important;
+
+  line-height: 0.94 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.industrial-hero-title .hero-green {
+  color: #5FAE91 !important;
+}
+
+.industrial-hero-title .hero-white {
+  color: #F3EFE7 !important;
+}
+
+.industrial-hero-title .hero-red {
+  color: #A31C1B !important;
+}
+
+
+/* ========================================================
+   TEST WORKSPACE
+   Keep page black, make working surface readable
+   ======================================================== */
+
+.validation-lab-clean {
+  background: #000000 !important;
+
+  border: 1px solid #262B28 !important;
+  border-radius: 16px !important;
+
+  padding: 30px !important;
+
+  box-shadow: none !important;
+}
+
+
+/* Workspace heading remains dark-site style */
+
+.validation-lab-clean__title {
+  color: #F3EFE7 !important;
+}
+
+.validation-lab-clean__desc {
+  color: #B7BBB7 !important;
+
+  font-size: 17px !important;
+  line-height: 1.55 !important;
+}
+
+.validation-lab-clean__eyebrow {
+  color: #74AD98 !important;
+}
+
+
+/* ========================================================
+   ENGINEERING + PLM PANELS
+   Light industrial surfaces
+   ======================================================== */
+
+.validation-card {
+  position: relative !important;
+
+  overflow: hidden !important;
+
+  background: #F1EEE7 !important;
+
+  border: 1px solid #CEC9BF !important;
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.28) !important;
+}
+
+
+/* image becomes a subtle technical watermark */
+
+.validation-card__image {
+  height: 145px !important;
+
+  opacity: 0.10 !important;
+
+  filter:
+    grayscale(70%)
+    contrast(1.05) !important;
+}
+
+
+/* Protect text readability */
+
+.validation-card__inner {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+
+/* Card titles */
+
+.validation-card__title {
+  color: #171717 !important;
+
+  font-size: 30px !important;
+  font-weight: 700 !important;
+}
+
+.validation-card__subtitle {
+  color: #555A56 !important;
+
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+
+/* ========================================================
+   COLUMN LABELS
+   ======================================================== */
+
+.validation-table-head {
+  color: #315F50 !important;
+
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  letter-spacing: 0.07em !important;
+}
+
+
+/* ========================================================
+   DATA ROWS
+   ======================================================== */
+
+.validation-table-row {
+  background: #FFFFFF !important;
+
+  border: 1px solid #D4D0C7 !important;
+  border-radius: 10px !important;
+
+  padding: 13px !important;
+
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.045) !important;
+}
+
+
+/* ========================================================
+   INPUTS
+   ======================================================== */
+
+.validation-input,
+.validation-select {
+  height: 50px !important;
+
+  color: #171717 !important;
+
+  background: #FFFFFF !important;
+
+  border: 1px solid #BDB9B0 !important;
+  border-radius: 7px !important;
+
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.validation-input:hover,
+.validation-select:hover {
+  border-color: #7F877F !important;
+}
+
+.validation-input:focus,
+.validation-select:focus {
+  border-color: #315F50 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,80,.12) !important;
+
+  outline: none !important;
+}
+
+
+/* Select options */
+
+.validation-select option {
+  color: #171717 !important;
+  background: #FFFFFF !important;
+}
+
+
+/* ========================================================
+   IMPORT / ADD PART
+   ======================================================== */
+
+.validation-card .validation-btn {
+  color: #F3EFE7 !important;
+
+  background: #06110C !important;
+
+  border: 1px solid #315F50 !important;
+  border-radius: 7px !important;
+
+  font-size: 16px !important;
+  font-weight: 700 !important;
+
+  box-shadow: none !important;
+}
+
+.validation-card .validation-btn:hover {
+  background: #123326 !important;
+}
+
+
+/* ========================================================
+   DELETE BUTTON — HIGH VISIBILITY
+   ======================================================== */
+
+.validation-remove {
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 46px !important;
+  height: 46px !important;
+
+  padding: 0 !important;
+
+  color: #FFFFFF !important;
+
+  background: #A31C1B !important;
+
+  border: 1px solid #A31C1B !important;
+  border-radius: 7px !important;
+
+  cursor: pointer !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  box-shadow: none !important;
+}
+
+.validation-remove svg {
+  display: block !important;
+
+  width: 19px !important;
+  height: 19px !important;
+
+  color: #FFFFFF !important;
+}
+
+.validation-remove:hover {
+  background: #7D1515 !important;
+  border-color: #7D1515 !important;
+
+  transform: none !important;
+}
+
+
+/* ========================================================
+   RUN VALIDATION
+   ======================================================== */
+
+.validation-lab-clean__run .validation-btn--primary {
+  color: #FFFFFF !important;
+
+  background: #A31C1B !important;
+
+  border: 1px solid #A31C1B !important;
+
+  min-height: 50px !important;
+
+  font-size: 17px !important;
+}
+
+.validation-lab-clean__run .validation-btn--primary:hover {
+  background: #7D1515 !important;
+}
+
+
+/* Load Sample */
+
+.validation-lab-clean__run .validation-btn:not(.validation-btn--primary):not(.validation-btn--danger) {
+  background: #06110C !important;
+}
+
+
+/* Reset */
+
+.validation-lab-clean__run .validation-btn--danger {
+  color: #F3EFE7 !important;
+
+  background: #171717 !important;
+
+  border-color: #3A3A3A !important;
+}
+
+
+/* ========================================================
+   CSV NOTE
+   ======================================================== */
+
+.validation-note {
+  color: #AEB3AF !important;
+
+  font-size: 14px !important;
+}
+
+.validation-note strong {
+  color: #F3EFE7 !important;
+}
+
+
+/* ========================================================
+   GENERAL PAGE SIMPLIFICATION
+   ======================================================== */
+
+body,
+html,
+#root {
+  background: #000000 !important;
+}
+
+
+/* Avoid unnecessary gray strips */
+
+main,
+.page,
+.page-wrapper,
+.content-wrapper {
+  background: #000000 !important;
+}
+
+
+/* ========================================================
+   MOBILE
+   ======================================================== */
+
+@media (max-width: 900px) {
+
+  .industrial-hero-title {
+    font-size: 50px !important;
+  }
+
+  .validation-card__title {
+    font-size: 25px !important;
+  }
+
+  .validation-input,
+  .validation-select {
+    font-size: 17px !important;
+  }
+
+}

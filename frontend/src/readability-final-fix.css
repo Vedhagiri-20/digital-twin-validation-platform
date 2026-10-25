@@ -1,0 +1,526 @@
+:root {
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --bg: #000000;
+  --surface: #11181d;
+  --surface-2: #151d22;
+  --surface-3: #0b1216;
+
+  --forest: #06110C;
+  --green: #69A991;
+  --green-soft: #8FC4B0;
+
+  --red: #A31C1B;
+  --red-soft: #E17973;
+
+  --amber: #D6A14A;
+
+  --text: #F4F2ED;
+  --text-secondary: #C1C8C4;
+  --text-muted: #8D9892;
+
+  --border: #29363d;
+}
+
+
+/* =====================================================
+   BASE TYPOGRAPHY
+   ===================================================== */
+
+html,
+body,
+#root {
+  font-family: var(--font-ui) !important;
+  font-size: 16px !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+body {
+  line-height: 1.5 !important;
+}
+
+
+/* Only major headings use serif */
+
+h1,
+h2,
+h3,
+.display-title,
+.section-title,
+.validation-results-title,
+.defect-register-title {
+  font-family: var(--font-display) !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+}
+
+h1 {
+  font-size: clamp(48px, 5vw, 76px) !important;
+}
+
+h2 {
+  font-size: 34px !important;
+  line-height: 1.12 !important;
+}
+
+h3 {
+  font-size: 25px !important;
+  line-height: 1.2 !important;
+}
+
+
+/* =====================================================
+   NAVIGATION + SIDEBAR
+   ===================================================== */
+
+header,
+nav,
+button,
+a,
+.sidebar-tab,
+.workspace-tab,
+[role="tab"] {
+  font-family: var(--font-ui) !important;
+}
+
+header a,
+nav a,
+.nav-link-button {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+.sidebar-tab,
+.workspace-tab,
+[role="tab"] {
+  min-height: 48px !important;
+
+  padding: 0 18px !important;
+
+  font-size: 15px !important;
+  font-weight: 600 !important;
+
+  line-height: 1.2 !important;
+}
+
+.sidebar-tab svg,
+.workspace-tab svg,
+[role="tab"] svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+
+/* =====================================================
+   MAIN VALIDATION PANEL
+   ===================================================== */
+
+.validation-view,
+.validation-panel,
+.results-panel,
+.defects-panel {
+  font-family: var(--font-ui) !important;
+}
+
+
+/* Eyebrow */
+
+.validation-view .eyebrow,
+.results-panel .eyebrow,
+.defects-panel .eyebrow,
+[class*="kicker"],
+[class*="eyebrow"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+
+  letter-spacing: .09em !important;
+  text-transform: uppercase !important;
+
+  color: var(--green-soft) !important;
+}
+
+
+/* Main result heading */
+
+.validation-view h2,
+.validation-results h2,
+.results-panel h2 {
+  font-size: 30px !important;
+  margin-bottom: 4px !important;
+}
+
+
+/* Summary text */
+
+.validation-view p,
+.validation-results p,
+.results-panel p,
+.defects-panel p {
+  font-family: var(--font-ui) !important;
+
+  font-size: 17px !important;
+  line-height: 1.5 !important;
+
+  color: var(--text-secondary) !important;
+}
+
+
+/* =====================================================
+   VALIDATION RESULTS ROWS
+   ===================================================== */
+
+.validation-results-list,
+.validation-list {
+  display: flex !important;
+  flex-direction: column !important;
+
+  gap: 10px !important;
+}
+
+
+.validation-result-row,
+.validation-row,
+.result-row {
+  min-height: 64px !important;
+
+  padding: 12px 14px !important;
+
+  background: var(--surface-2) !important;
+
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+
+  display: grid !important;
+  align-items: center !important;
+}
+
+
+/* Part number */
+
+.validation-result-row strong,
+.validation-row strong,
+.result-row strong {
+  font-family: var(--font-ui) !important;
+
+  font-size: 15px !important;
+  font-weight: 700 !important;
+
+  color: var(--text) !important;
+}
+
+
+/* Part name */
+
+.validation-result-row small,
+.validation-row small,
+.result-row small {
+  font-family: var(--font-ui) !important;
+
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+
+  color: var(--text-muted) !important;
+}
+
+
+/* Issue title */
+
+.validation-result-row [class*="title"],
+.validation-row [class*="title"],
+.result-row [class*="title"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 15px !important;
+  font-weight: 600 !important;
+
+  color: var(--text-secondary) !important;
+}
+
+
+/* Issue detail */
+
+.validation-result-row [class*="detail"],
+.validation-row [class*="detail"],
+.result-row [class*="detail"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+
+  color: var(--text-muted) !important;
+}
+
+
+/* =====================================================
+   BADGES
+   ===================================================== */
+
+.badge,
+.status-badge,
+.severity-badge,
+[class*="badge"],
+[class*="severity"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 11px !important;
+  font-weight: 700 !important;
+
+  letter-spacing: .04em !important;
+
+  padding: 6px 9px !important;
+
+  border-radius: 6px !important;
+}
+
+
+[class*="high"] {
+  color: #FFAAA5 !important;
+}
+
+[class*="medium"] {
+  color: #E9BD70 !important;
+}
+
+[class*="pass"] {
+  color: #9AD1B9 !important;
+}
+
+
+/* =====================================================
+   DEFECT REGISTER
+   ===================================================== */
+
+.defect-grid,
+.defects-grid {
+  display: grid !important;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+  gap: 16px !important;
+}
+
+
+.defect-card {
+  min-height: 190px !important;
+
+  padding: 18px !important;
+
+  background: #050505 !important;
+
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+}
+
+
+/* defect id */
+
+.defect-card [class*="id"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 11px !important;
+  font-weight: 700 !important;
+
+  letter-spacing: .06em !important;
+
+  color: var(--text-muted) !important;
+}
+
+
+/* defect title */
+
+.defect-card h3,
+.defect-card [class*="title"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 16px !important;
+  font-weight: 700 !important;
+
+  line-height: 1.35 !important;
+
+  color: var(--text) !important;
+}
+
+
+/* part number */
+
+.defect-card h2,
+.defect-card [class*="part"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 22px !important;
+  font-weight: 500 !important;
+
+  color: var(--text-secondary) !important;
+}
+
+
+/* Expected / Actual blocks */
+
+.defect-card [class*="expected"],
+.defect-card [class*="actual"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 13px !important;
+
+  color: var(--text-secondary) !important;
+}
+
+
+.defect-card [class*="expected"] small,
+.defect-card [class*="actual"] small {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+
+  letter-spacing: .07em !important;
+
+  color: var(--text-muted) !important;
+}
+
+
+/* =====================================================
+   EXPORT AREA
+   ===================================================== */
+
+.validation-export-bar,
+.export-panel,
+.export-section {
+  padding: 18px !important;
+
+  background: #050505 !important;
+
+  border: 1px solid #252D29 !important;
+  border-radius: 10px !important;
+}
+
+
+.validation-export-bar h3,
+.export-panel h3,
+.export-section h3 {
+  font-family: var(--font-ui) !important;
+
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+
+.validation-export-bar [class*="eyebrow"],
+.export-panel [class*="eyebrow"] {
+  font-size: 10px !important;
+}
+
+
+/* =====================================================
+   ALL BUTTONS — ONE STANDARD
+   ===================================================== */
+
+button,
+.btn,
+.validation-btn,
+.export-btn {
+  font-family: var(--font-ui) !important;
+
+  font-size: 14px !important;
+  font-weight: 600 !important;
+
+  min-height: 44px !important;
+
+  padding: 0 18px !important;
+
+  border-radius: 8px !important;
+
+  line-height: 1 !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* Export buttons */
+
+.validation-export-bar button,
+.export-panel button,
+.export-section button {
+  min-height: 48px !important;
+
+  background: #171C19 !important;
+
+  color: var(--text) !important;
+
+  border: 1px solid #38433D !important;
+}
+
+
+.validation-export-bar button:hover,
+.export-panel button:hover,
+.export-section button:hover {
+  background: #202922 !important;
+
+  border-color: #53665B !important;
+}
+
+
+/* =====================================================
+   DEFECT OPEN BUTTON
+   ===================================================== */
+
+.defect-card button,
+.defect-card .status-button {
+  font-family: var(--font-ui) !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+
+  min-height: 32px !important;
+
+  padding: 0 12px !important;
+}
+
+
+/* =====================================================
+   TOP VALIDATION BUTTONS
+   ===================================================== */
+
+.run-validation,
+.reset-button,
+[class*="run-validation"] {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+
+  min-height: 46px !important;
+}
+
+
+/* =====================================================
+   GENERAL TEXT — prevent tiny text
+   ===================================================== */
+
+main small,
+section small,
+article small {
+  font-family: var(--font-ui) !important;
+
+  font-size: 12px !important;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 900px) {
+
+  .defect-grid,
+  .defects-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .validation-result-row,
+  .validation-row,
+  .result-row {
+    min-height: 72px !important;
+  }
+
+}

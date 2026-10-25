@@ -11,6 +11,143 @@ import { executeValidation, loadProductData } from "./api";
 import ValidationInputLab from "./components/ValidationInputLab";
 import ValidationExports from "./components/ValidationExports";
 import LiveBomComparison from "./components/LiveBomComparison";
+import ValidationFlowCarousel from "./components/ValidationFlowCarousel";
+
+
+function normalizeValidationResponse(payload) {
+  const source =
+    payload?.validation ??
+    payload?.validationResult ??
+    payload?.validation_result ??
+    payload?.result ??
+    payload?.data ??
+    payload ??
+    {};
+
+  const results =
+    source?.results ??
+    source?.validationResults ??
+    source?.validation_results ??
+    source?.checks ??
+    [];
+
+  const defects =
+    source?.defects ??
+    payload?.defects ??
+    [];
+
+  const oldSummary =
+    source?.summary ??
+    payload?.summary ??
+    {};
+
+  const isPassed = (row) => {
+    const status = String(
+      row?.status ??
+      row?.result ??
+      row?.dataState ??
+      row?.data_state ??
+      ""
+    ).toLowerCase();
+
+    return (
+      row?.aligned === true ||
+      row?.passed === true ||
+      status === "pass" ||
+      status === "passed" ||
+      status === "aligned" ||
+      status === "success"
+    );
+  };
+
+  const partsChecked = Number(
+    oldSummary?.partsChecked ??
+    oldSummary?.parts_checked ??
+    source?.partsChecked ??
+    source?.parts_checked ??
+    source?.totalParts ??
+    source?.total_parts ??
+    results.length ??
+    0
+  );
+
+  const calculatedPassed = Array.isArray(results)
+    ? results.filter(isPassed).length
+    : 0;
+
+  const passedParts = Number(
+    oldSummary?.passedParts ??
+    oldSummary?.passed_parts ??
+    source?.passedParts ??
+    source?.passed_parts ??
+    calculatedPassed
+  );
+
+  const failedParts = Number(
+    oldSummary?.failedParts ??
+    oldSummary?.failed_parts ??
+    source?.failedParts ??
+    source?.failed_parts ??
+    Math.max(partsChecked - passedParts, 0)
+  );
+
+
+  const rawPassRate =
+    oldSummary?.passRate ??
+    oldSummary?.pass_rate ??
+    oldSummary?.passPercentage ??
+    oldSummary?.pass_percentage ??
+    source?.passRate ??
+    source?.pass_rate ??
+    source?.passPercentage ??
+    source?.pass_percentage;
+
+  const parsedPassRate = Number(
+    String(rawPassRate ?? "").replace("%", "").trim()
+  );
+
+  const normalizedPassRate =
+    Number.isFinite(parsedPassRate)
+      ? parsedPassRate
+      : partsChecked > 0
+      ? Math.round((passedParts / partsChecked) * 100)
+      : 0;
+
+
+  return {
+    ...source,
+
+    results,
+    validationResults: results,
+    validation_results: results,
+
+    defects,
+
+    partsChecked,
+    passedParts,
+    failedParts,
+
+    summary: {
+      ...oldSummary,
+
+      partsChecked,
+      passedParts,
+      failedParts,
+
+      // keep snake_case too in case another component needs it
+      parts_checked: partsChecked,
+      passed_parts: passedParts,
+      failed_parts: failedParts,
+
+      passRate: normalizedPassRate,
+      pass_rate: normalizedPassRate,
+      passPercentage: normalizedPassRate,
+      pass_percentage: normalizedPassRate,
+    },
+  };
+}
+
+
 const steps = [
   [Boxes, "Engineering Source", "The latest product structure, part revisions, quantities and lifecycle state."],
   [Workflow, "Integration / Sync", "Product data moves to PLM through APIs, integrations or scheduled synchronization."],
@@ -19,7 +156,24 @@ const steps = [
 ];
 
 export default function App() {
-  const [validation, setValidation] = useState(null);
+  const [validation, setValidationState] = useState(null);
+
+  const setValidation = (value) => {
+    if (typeof value === "function") {
+      setValidationState((previous) =>
+        normalizeValidationResponse(
+          value(previous)
+        )
+      );
+      return;
+    }
+
+    setValidationState(
+      value == null
+        ? value
+        : normalizeValidationResponse(value)
+    );
+  };
   const [activeTab, setActiveTab] = useState("overview");
   const [running, setRunning] = useState(false);
   const [productId, setProductId] = useState(1);
@@ -55,8 +209,62 @@ export default function App() {
 
     try {
       const data = await executeValidation(productId);
-      setValidation(data);
-      setActiveTab("validation");
+      const passPercentage =
+                      data?.passPercentage ??
+                      data?.pass_percentage ??
+                      data?.passPercent ??
+                      data?.passRate ??
+                      data?.summary?.passPercentage ??
+                      data?.summary?.pass_percentage ??
+                      (
+                        Number(data?.partsChecked) > 0
+                          ? Math.round(
+                              (Number(data?.passedParts ?? 0) /
+                                Number(data.partsChecked)) *
+                                100
+                            )
+                          : 0
+                      );
+
+                    const validationWithUiFields = {
+                      ...data,
+
+                      passPercentage,
+                      pass_percentage: passPercentage,
+                      passPercent: passPercentage,
+                      passRate: passPercentage,
+                      passPct: passPercentage,
+                      percentage: passPercentage,
+
+                      summary: {
+                        ...(data?.summary ?? {}),
+
+                        partsChecked:
+                          data?.partsChecked ??
+                          data?.summary?.partsChecked ??
+                          0,
+
+                        passedParts:
+                          data?.passedParts ??
+                          data?.summary?.passedParts ??
+                          0,
+
+                        failedParts:
+                          data?.failedParts ??
+                          data?.summary?.failedParts ??
+                          0,
+
+                        passPercentage,
+                        pass_percentage: passPercentage,
+                        passPercent: passPercentage,
+                        passRate: passPercentage,
+                        passPct: passPercentage,
+                        percentage: passPercentage,
+                      },
+                    };
+
+                    setValidation(validationWithUiFields);
+                    setActiveTab("validation");
     } catch (error) {
       console.error("FastAPI validation error:", error);
       alert("Could not connect to the FastAPI backend.");
@@ -98,7 +306,15 @@ Engineering/CAD and PLM inputs are compared for missing parts, revision, quantit
         <section className="hero">
           <div className="hero-copy">
             <div className="eyebrow"><CircleDot size={15}/> ENGINEERING VALIDATION ENVIRONMENT</div>
-            <h1>See how engineering data stays consistent across a <span>Digital Twin / PLM workflow.</span></h1>
+            <h1 className="industrial-hero-title">
+  <span className="hero-green">See how</span>{" "}
+  <span className="hero-white">
+    engineering data stays consistent across a
+  </span>{" "}
+  <span className="hero-red">
+    Digital Twin / PLM workflow.
+  </span>
+</h1>
             <p className="hero-lead">A lightweight hands-on model that compares Engineering/CAD source data with its PLM representation, validates BOM information, and exposes revision, quantity, lifecycle and synchronization defects.</p>
             <div className="hero-actions">
               <button className="primary-button" onClick={runValidation}><Play size={17} fill="currentColor"/>Execute validation</button>
@@ -107,30 +323,22 @@ Engineering/CAD and PLM inputs are compared for missing parts, revision, quantit
             <div className="hero-note"><ShieldCheck size={18}/><span>Built for learning and demonstration. This project does not represent any company's proprietary implementation.</span></div>
           </div>
 
-          <div className="hero-visual">
-            <SystemCard label="ENGINEERING SOURCE" motor="REV C" bearing="QTY 2" productData={liveProduct} />
-            <div className="flow-line"><span/><GitCompareArrows size={24}/><span/></div>
-            <SystemCard label="PLM REPRESENTATION" motor="REV B" bearing="QTY 1" warning productData={liveProduct} />
-            <div className="detected-badge"><AlertTriangle size={17}/>Validation finds the mismatch</div>
-          </div>
+          <div className="cad-plm-image-panel">
+  <img
+    src="/images/cad-plm-comparison.png"
+    alt="3D Engineering CAD and PLM digital twin comparison"
+  />
+  <div className="cad-plm-image-caption">
+    <span>ENGINEERING CAD</span>
+    <span className="comparison-arrow">↔</span>
+    <span>PLM DIGITAL TWIN</span>
+  </div>
+</div>
         </section>
 
-        <section className="section" id="how-it-works">
-          <div className="section-heading">
-            <span className="kicker">VALIDATION FLOW</span>
-            <h2>Maintain digital continuity from engineering source to PLM.</h2>
-            <p>This demo simulates what can happen when information changes in an engineering source but the downstream PLM representation is missing, stale or inconsistent.</p>
-          </div>
-          <div className="steps-grid">
-            {steps.map(([Icon, title, text], index) => (
-              <article className="step-card" key={title}>
-                <span className="step-number">{String(index + 1).padStart(2, "0")}</span>
-                <Icon size={26}/><h3>{title}</h3><p>{text}</p>
-                {index < steps.length - 1 && <ChevronRight className="step-arrow" size={20}/>} 
-              </article>
-            ))}
-          </div>
-        </section>
+        
+      <ValidationFlowCarousel />
+
 
         <section className="section demo-section" id="demo">
           <div className="demo-top">
@@ -165,7 +373,7 @@ Engineering/CAD and PLM inputs are compared for missing parts, revision, quantit
               {activeTab === "validation" && (
                 <>
                   <ValidationView validation={validation} runValidation={runValidation}/>
-                  <ValidationExports />
+                  <ValidationExports validation={validation} />
                 </>
               )}
               {activeTab === "defects" && <DefectsView validation={validation} runValidation={runValidation}/>} 
@@ -198,14 +406,7 @@ function SystemCard({label,motor,bearing,warning=false,productData}) {
 }
 
 function Overview({validation,runValidation,productData,engineeringPartsData,engineeringChangeData}) {
-  const summary = validation?.summary;
-  const metrics = [["Product",productData.code],["BOM parts",engineeringPartsData.length],["Open ECO",engineeringChangeData.id],["Validation",validation?`${summary.passRate}% pass`:"Not run"]];
-  return <div>
-    <div className="workspace-title"><div><span>DEMO PRODUCT</span><h3>{productData.code} · {productData.name}</h3><p>{productData.description}</p></div><span className="status-chip">MODEL ACTIVE</span></div>
-    <div className="metrics-grid">{metrics.map(([label,value]) => <div className="metric-card" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
-    <div className="eco-card"><div><span className="eco-label">ENGINEERING CHANGE</span><strong>{engineeringChangeData.id}</strong></div><p>{engineeringChangeData.partNumber}: Revision {engineeringChangeData.fromRevision} → {engineeringChangeData.toRevision}</p><span>{engineeringChangeData.reason}</span><b>{engineeringChangeData.status}</b></div>
-    {!validation && <Empty icon={GitCompareArrows} title="Ready to compare Engineering vs. PLM" text="Run the validation engine to check part revisions, quantities, lifecycle states and missing components." action={runValidation}/>} 
-  </div>;
+  return null;
 }
 
 function BomComparison({plmMap,engineeringPartsData}) {
@@ -214,7 +415,7 @@ function BomComparison({plmMap,engineeringPartsData}) {
 
 function ValidationView({validation,runValidation}) {
   if(!validation) return <Empty tall icon={GitCompareArrows} title="No validation run yet" text="Run the sample comparison to generate validation results." action={runValidation}/>;
-  return <div><div className="workspace-title"><div><span>VALIDATION RESULTS</span><h3>{validation.summary.partsChecked} engineering parts checked</h3><p>{validation.summary.passedParts} aligned · {validation.summary.failedParts} parts contain one or more mismatches.</p></div><span className="pass-rate">{validation.summary.passRate}% PASS</span></div><div className="results-list">{validation.results.map((item,index)=><div className="validation-row" key={`${item.partNumber}-${item.issueType}-${index}`}><div className={`result-icon ${item.status.toLowerCase()}`}>{item.status==="PASS"?<CheckCircle2 size={19}/>:<XCircle size={19}/>}</div><div><strong>{item.partNumber}</strong><span>{item.partName}</span></div><div className="validation-issue">{item.status==="PASS"?<span>Engineering and PLM data aligned</span>:<><strong>{humanize(item.issueType)}</strong><span>Expected {item.expected} · PLM has {item.actual}</span></>}</div><span className={`severity ${item.severity.toLowerCase()}`}>{item.status==="PASS"?"PASS":item.severity}</span></div>)}</div></div>;
+  return <div><div className="workspace-title"><div><span>VALIDATION RESULTS</span><h3>{validation?.summary?.partsChecked ?? 0} engineering parts checked</h3><p>{(validation?.summary?.passedParts ?? validation?.passedParts ?? 0)} aligned · {validation.summary?.failedParts} parts contain one or more mismatches.</p></div><span className="pass-rate">{validation.summary.passRate}% PASS</span></div><div className="results-list">{validation.results.map((item,index)=><div className="validation-row" key={`${item.partNumber}-${item.issueType}-${index}`}><div className={`result-icon ${item.status.toLowerCase()}`}>{item.status==="PASS"?<CheckCircle2 size={19}/>:<XCircle size={19}/>}</div><div><strong>{item.partNumber}</strong><span>{item.partName}</span></div><div className="validation-issue">{item.status==="PASS"?<span>Engineering and PLM data aligned</span>:<><strong>{humanize(item.issueType)}</strong><span>Expected {item.expected} · PLM has {item.actual}</span></>}</div><span className={`severity ${item.severity.toLowerCase()}`}>{item.status==="PASS"?"PASS":item.severity}</span></div>)}</div></div>;
 }
 
 function DefectsView({validation,runValidation}) {

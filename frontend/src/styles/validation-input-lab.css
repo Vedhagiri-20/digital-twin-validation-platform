@@ -1,0 +1,359 @@
+:root {
+  --dt-charcoal: #171717;
+  --dt-forest: #06110C;
+  --dt-crimson: #A31C1B;
+  --dt-ivory: #F3EFE7;
+  --dt-muted: #A9B0AC;
+  --dt-accent: #86B9AA;
+  --dt-line: rgba(243, 239, 231, 0.12);
+}
+
+/* MAIN WORKSPACE */
+.validation-lab-clean {
+  width: 100%;
+  padding: 30px;
+  margin-top: 18px;
+
+  background:
+    radial-gradient(circle at 85% 0%, rgba(163, 28, 27, 0.08), transparent 24%),
+    linear-gradient(180deg, #171717 0%, #111513 100%);
+
+  border: 1px solid var(--dt-line);
+  border-radius: 18px;
+}
+
+/* TOP HEADING */
+.validation-lab-clean__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+
+  border-bottom: 1px solid var(--dt-line);
+}
+
+.validation-lab-clean__eyebrow {
+  margin-bottom: 8px;
+
+  color: var(--dt-accent);
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.validation-lab-clean__title {
+  margin: 0 0 8px;
+
+  color: var(--dt-ivory);
+
+  font-size: 34px !important;
+  line-height: 1.15;
+}
+
+.validation-lab-clean__desc {
+  max-width: 850px;
+  margin: 0;
+
+  color: var(--dt-muted);
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.65;
+}
+
+/* RUN BUTTON AREA */
+.validation-lab-clean__run {
+  min-width: 215px;
+}
+
+.validation-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 46px;
+  padding: 10px 17px;
+
+  color: var(--dt-ivory);
+
+  background: #091610;
+  border: 1px solid rgba(134, 185, 170, 0.28);
+  border-radius: 8px;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.validation-btn:hover {
+  background: #10251B;
+  border-color: rgba(134, 185, 170, 0.55);
+}
+
+.validation-btn--primary {
+  background: #0E2A1D;
+  border-color: #396B58;
+}
+
+.validation-btn--primary:hover {
+  background: #143A29;
+}
+
+.validation-btn--danger {
+  color: #E9AAA7;
+  background: rgba(163, 28, 27, 0.10);
+  border-color: rgba(163, 28, 27, 0.32);
+}
+
+/* IMPORTANT:
+   Engineering on TOP
+   PLM underneath
+*/
+.validation-lab-clean__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* DATA CARD */
+.validation-card {
+  position: relative;
+
+  width: 100%;
+  overflow: hidden;
+
+  background: #101513;
+  border: 1px solid rgba(134, 185, 170, 0.18);
+  border-radius: 16px;
+
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+}
+
+/* VISUAL HEADER USING YOUR EXISTING IMAGE */
+.validation-card__image {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 150px;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(6, 17, 12, 0.42) 0%,
+      rgba(16, 21, 19, 0.76) 55%,
+      #101513 100%
+    ),
+    url("/images/cad-plm-comparison.png");
+
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  opacity: 0.34;
+
+  pointer-events: none;
+}
+
+/* Show CAD side of image */
+.validation-card--engineering .validation-card__image {
+  background-position: 18% center;
+}
+
+/* Show PLM side of image */
+.validation-card--plm .validation-card__image {
+  background-position: 82% center;
+}
+
+.validation-card__inner {
+  position: relative;
+  z-index: 1;
+
+  padding: 28px;
+}
+
+/* HEADER AREA INSIDE EACH CARD */
+.validation-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+
+  min-height: 105px;
+  margin-bottom: 14px;
+}
+
+.validation-card__title {
+  margin: 0 0 4px;
+
+  color: var(--dt-ivory);
+
+  font-size: 27px !important;
+  line-height: 1.2;
+}
+
+.validation-card__subtitle {
+  margin: 0;
+
+  color: #C1C6C2;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 14px !important;
+}
+
+.validation-card__actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* TABLE */
+.validation-card__table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.validation-table-head,
+.validation-table-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(145px, 1.15fr)
+    minmax(190px, 1.6fr)
+    minmax(80px, 0.55fr)
+    minmax(75px, 0.5fr)
+    minmax(150px, 1fr)
+    46px;
+
+  gap: 12px;
+  align-items: center;
+}
+
+.validation-table-head {
+  padding: 0 12px 7px;
+
+  color: #8ABAA9;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.validation-table-row {
+  padding: 12px;
+
+  background: rgba(5, 12, 9, 0.76);
+  border: 1px solid rgba(243, 239, 231, 0.09);
+  border-radius: 10px;
+}
+
+/* INPUTS — BIGGER AND CLEARER */
+.validation-input,
+.validation-select {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+
+  padding: 10px 12px;
+
+  color: var(--dt-ivory) !important;
+
+  background: #151917 !important;
+  border: 1px solid rgba(243, 239, 231, 0.14) !important;
+  border-radius: 8px !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 500;
+
+  outline: none;
+}
+
+.validation-input:focus,
+.validation-select:focus {
+  border-color: #659587 !important;
+
+  box-shadow:
+    0 0 0 2px rgba(101, 149, 135, 0.15);
+}
+
+.validation-remove {
+  width: 42px;
+  height: 42px;
+
+  color: #EAA29E;
+
+  background: rgba(163, 28, 27, 0.10);
+  border: 1px solid rgba(163, 28, 27, 0.32);
+  border-radius: 8px;
+
+  font-size: 19px;
+
+  cursor: pointer;
+}
+
+.validation-remove:hover {
+  background: rgba(163, 28, 27, 0.22);
+}
+
+.validation-note {
+  margin-top: 18px;
+
+  color: #949D98;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 13px !important;
+}
+
+.validation-error {
+  margin-top: 15px;
+
+  color: #ED9C97;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 14px !important;
+}
+
+.validation-hidden-file {
+  display: none;
+}
+
+/* Smaller screens */
+@media (max-width: 950px) {
+
+  .validation-lab-clean {
+    padding: 20px;
+  }
+
+  .validation-lab-clean__top {
+    flex-direction: column;
+  }
+
+  .validation-lab-clean__run {
+    width: 100%;
+  }
+
+  .validation-table-head {
+    display: none;
+  }
+
+  .validation-table-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .validation-remove {
+    width: 100%;
+  }
+
+}

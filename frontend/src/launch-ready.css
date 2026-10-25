@@ -1,0 +1,573 @@
+:root {
+  --launch-bg: #050706;
+  --launch-panel: #0d1310;
+  --launch-panel-2: #111915;
+  --launch-line: #263b33;
+  --launch-text: #f3f5f4;
+  --launch-muted: #aeb8b3;
+  --launch-green: #78b7a5;
+  --launch-green-dark: #0a2419;
+  --launch-red: #b62a28;
+}
+
+html,
+body,
+#root,
+.site-shell {
+  background-color: var(--launch-bg) !important;
+  color: var(--launch-text) !important;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  background-image:
+    linear-gradient(rgba(120, 183, 165, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 183, 165, 0.035) 1px, transparent 1px) !important;
+  background-size: 34px 34px !important;
+}
+
+button,
+input,
+select,
+textarea,
+.nav-links,
+.workspace-nav,
+.validation-export-actions {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+}
+
+.topbar {
+  background: rgba(3, 13, 9, 0.97) !important;
+  border-bottom-color: #1f392f !important;
+}
+
+.brand strong {
+  font-size: 15px !important;
+}
+
+.brand small {
+  font-size: 12px !important;
+}
+
+.nav-links {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+.nav-link-button,
+.github-link,
+.primary-button,
+.secondary-button,
+.ghost-button,
+.validation-btn,
+.validation-export-actions button {
+  min-height: 44px;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.hero {
+  background: transparent !important;
+}
+
+.hero h1,
+.industrial-hero-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-weight: 760 !important;
+}
+
+.hero-lead,
+.demo-top p,
+.section-heading p,
+.industry-flow__intro p {
+  font-size: 17px !important;
+  line-height: 1.65 !important;
+}
+
+.cad-plm-image-panel {
+  background: #020806 !important;
+  border: 1px solid #244a3c !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+}
+
+.cad-plm-image-panel img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.demo-section {
+  background: transparent !important;
+}
+
+.demo-top h2 {
+  color: var(--launch-text) !important;
+  font-size: clamp(30px, 3vw, 44px) !important;
+  font-weight: 760 !important;
+}
+
+.workspace {
+  grid-template-columns: 200px minmax(0, 1fr) !important;
+  background: #0b1110 !important;
+  border: 1px solid #2b4239 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32) !important;
+}
+
+.workspace-nav {
+  background: #07100c !important;
+  border-right-color: #263b33 !important;
+}
+
+.workspace-nav button {
+  min-height: 48px !important;
+  margin-bottom: 7px !important;
+  padding: 11px 12px !important;
+  border: 1px solid #244438 !important;
+  border-radius: 8px !important;
+  color: #d5ddd9 !important;
+  background: #07120d !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+.workspace-nav button.active {
+  color: #ffffff !important;
+  background: #123024 !important;
+  border-color: #4b7f6d !important;
+}
+
+.workspace-content {
+  padding: 28px !important;
+  background: #0e1518 !important;
+}
+
+.workspace-title {
+  padding-bottom: 22px !important;
+  border-bottom-color: #26363b !important;
+}
+
+.workspace-title > div > span,
+.live-bom-kicker,
+.validation-export-copy span,
+.kicker,
+.eyebrow {
+  color: var(--launch-green) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.1em !important;
+}
+
+.workspace-title h3,
+.live-bom-header h3 {
+  color: #ffffff !important;
+  font-size: 27px !important;
+  font-weight: 750 !important;
+}
+
+.workspace-title p,
+.live-bom-header p {
+  color: #b4c0bb !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
+
+.pass-rate {
+  padding: 9px 12px !important;
+  color: #9fe0bd !important;
+  background: #102a1e !important;
+  border-color: #426e5c !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+.validation-row {
+  grid-template-columns: 44px 180px minmax(260px, 1fr) auto !important;
+  gap: 15px !important;
+  min-height: 72px !important;
+  padding: 14px 10px !important;
+  border-bottom-color: #2a383d !important;
+}
+
+.validation-row > div:nth-child(2) strong,
+.validation-issue strong {
+  color: #f1f4f2 !important;
+  font-size: 14px !important;
+}
+
+.validation-row > div:nth-child(2) span,
+.validation-issue span {
+  color: #a5b0ab !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.result-icon {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.severity {
+  padding: 7px 9px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 11px !important;
+}
+
+.severity.pass,
+.severity.low {
+  color: #9bd1aa !important;
+  border-color: #315c40 !important;
+  background: #102519 !important;
+}
+
+.defect-grid {
+  gap: 14px !important;
+}
+
+.defect-card {
+  padding: 20px !important;
+  background: #080d0b !important;
+  border-color: #283a33 !important;
+  border-radius: 12px !important;
+}
+
+.defect-top {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 12px !important;
+}
+
+.defect-card h4 {
+  font-size: 17px !important;
+}
+
+.defect-card > p,
+.defect-card dd {
+  font-size: 13px !important;
+}
+
+.defect-card dt {
+  font-size: 11px !important;
+}
+
+.validation-empty-copy {
+  margin-top: 20px;
+  padding: 30px;
+  border: 1px solid #294038;
+  border-radius: 10px;
+  color: #c2ccc7;
+  background: #09110d;
+  font-size: 15px;
+}
+
+.validation-empty-copy.success {
+  color: #9fd2ae;
+}
+
+.live-bom {
+  padding: 28px !important;
+}
+
+.live-bom-badge {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 11px !important;
+}
+
+.live-bom-table th {
+  color: #90b9ad !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 12px !important;
+}
+
+.live-bom-table td {
+  padding: 16px 12px !important;
+}
+
+.live-bom-table td strong {
+  color: #edf2ef !important;
+  font-size: 14px !important;
+}
+
+.live-bom-table td span:not(.live-bom-state),
+.live-bom-table td small,
+.live-bom-state {
+  font-size: 12px !important;
+}
+
+.validation-export-bar {
+  margin: 24px 0 0 !important;
+  padding: 18px !important;
+  background: #050706 !important;
+  border-color: #294038 !important;
+  border-radius: 10px !important;
+}
+
+.validation-export-copy strong {
+  color: #f2f4f2 !important;
+  font-size: 15px !important;
+}
+
+.validation-export-actions button {
+  min-width: 145px !important;
+  color: #eef2ef !important;
+  background: #151c18 !important;
+  border-color: #3c5048 !important;
+}
+
+.validation-export-actions button:hover:not(:disabled) {
+  background: #153126 !important;
+  border-color: #5d8e7d !important;
+}
+
+.validation-export-actions button:disabled {
+  opacity: 0.38 !important;
+  cursor: not-allowed !important;
+}
+
+.validation-lab-clean {
+  padding: 30px !important;
+  background: #050706 !important;
+  border-color: #2a4137 !important;
+}
+
+.validation-lab-clean__title {
+  color: #ffffff !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 32px !important;
+  font-weight: 760 !important;
+}
+
+.validation-lab-clean__desc {
+  color: #b6c0bb !important;
+  font-size: 16px !important;
+}
+
+.validation-lab-clean__run {
+  display: flex !important;
+  gap: 10px !important;
+  min-width: 340px !important;
+}
+
+.validation-card {
+  background: #000000 !important;
+  border-color: #2a4338 !important;
+  border-radius: 16px !important;
+}
+
+.validation-card__visual {
+  position: relative;
+  min-height: 230px;
+  overflow: hidden;
+  background: #000000;
+  border-bottom: 1px solid #263c33;
+}
+
+.validation-card__visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.78 !important;
+  filter: contrast(1.08) brightness(0.9) !important;
+}
+
+.validation-card--engineering .validation-card__visual img {
+  object-position: 18% center;
+}
+
+.validation-card--plm .validation-card__visual img {
+  object-position: 82% center;
+}
+
+.validation-card__visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.78));
+}
+
+.validation-card__header {
+  position: absolute !important;
+  left: 28px;
+  right: 28px;
+  bottom: 24px;
+  z-index: 2;
+  min-height: 0 !important;
+  margin: 0 !important;
+  align-items: flex-end !important;
+}
+
+.validation-card__title {
+  color: #ffffff !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 28px !important;
+  font-weight: 760 !important;
+}
+
+.validation-card__subtitle {
+  color: #d5ddd9 !important;
+  font-size: 14px !important;
+}
+
+.validation-card__table-wrap {
+  padding: 24px 28px 28px;
+  background: #000000;
+}
+
+.validation-table-head,
+.validation-table-row {
+  grid-template-columns:
+    minmax(155px, 1.2fr)
+    minmax(210px, 1.6fr)
+    minmax(90px, 0.6fr)
+    minmax(85px, 0.55fr)
+    minmax(165px, 1fr)
+    48px !important;
+}
+
+.validation-table-head {
+  color: #87bbaa !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 12px !important;
+}
+
+.validation-table-row {
+  padding: 12px !important;
+  background: #090c0b !important;
+  border-color: #232f2a !important;
+}
+
+.validation-input,
+.validation-select {
+  height: 50px !important;
+  color: #f3f5f4 !important;
+  background: #111512 !important;
+  border-color: #35443d !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+.validation-remove {
+  color: #ffffff !important;
+  background: #2a1110 !important;
+  border-color: #7f2825 !important;
+}
+
+.validation-note,
+.validation-error {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 13px !important;
+}
+
+.industry-flow {
+  background: #050706 !important;
+}
+
+.industry-flow__intro h2,
+.industry-flow__stage h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  color: #ffffff !important;
+  font-weight: 760 !important;
+}
+
+.industry-flow__progress-item {
+  min-height: 58px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: 14px !important;
+}
+
+.industry-flow__stage-number,
+.industry-flow__checks-label,
+.industry-flow__footer,
+.industry-flow__stage-copy h4,
+.industry-flow__stage-copy p,
+.industry-flow__check {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+}
+
+.industry-flow__stage-copy p,
+.industry-flow__check {
+  font-size: 14px !important;
+}
+
+.react-error-panel {
+  max-width: 940px;
+  margin: 14vh auto;
+  padding: 34px;
+  color: #f2f4f2;
+  background: #0e1518;
+  border: 1px solid #31454d;
+  border-radius: 14px;
+}
+
+.react-error-panel h2 {
+  margin-top: 0;
+  font-size: 32px;
+}
+
+.react-error-panel p,
+.react-error-panel pre,
+.react-error-panel button {
+  font-size: 15px;
+}
+
+.react-error-panel pre {
+  padding: 16px;
+  color: #f19a92;
+  background: #050706;
+  border: 1px solid #603331;
+  border-radius: 8px;
+  white-space: pre-wrap;
+}
+
+.react-error-panel button {
+  min-height: 44px;
+  padding: 0 16px;
+  color: #fff;
+  background: #123024;
+  border: 1px solid #4b7f6d;
+  border-radius: 8px;
+}
+
+@media (max-width: 980px) {
+  .workspace {
+    grid-template-columns: 1fr !important;
+  }
+
+  .workspace-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    border-right: 0 !important;
+    border-bottom: 1px solid #263b33;
+  }
+
+  .validation-lab-clean__top,
+  .validation-card__header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .validation-lab-clean__run {
+    width: 100%;
+    min-width: 0 !important;
+  }
+
+  .validation-table-head {
+    display: none !important;
+  }
+
+  .validation-table-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .validation-remove {
+    width: 100% !important;
+  }
+}

@@ -33,3 +33,6 @@ frontend/.env
 *.before-live-backend
 *.pre-api.backup
 *.pre-domain.backup
+
+*.bak
+*.before-*

@@ -1,55 +1,81 @@
-import React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Download,
-  FileJson,
-  FileSpreadsheet,
-  Play,
-  Plus,
-  RotateCcw,
-  Trash2,
-  Upload,
-} from "lucide-react";
-import { executeCustomValidation } from "../api";
+import React, { useRef, useState } from "react";
+import "../styles/validation-input-lab.css";
 
-const EMPTY_PART = {
-  partNumber: "",
-  name: "",
-  revision: "A",
-  quantity: 1,
-  lifecycle: "IN_WORK",
-};
+const DEFAULT_ENGINEERING = [
+  {
+    part_number: "MOTOR-001",
+    name: "Servo Motor",
+    revision: "C",
+    quantity: 1,
+    lifecycle: "RELEASED",
+  },
+  {
+    part_number: "STAGE-002",
+    name: "Linear Stage",
+    revision: "B",
+    quantity: 1,
+    lifecycle: "RELEASED",
+  },
+];
 
-function cloneParts(parts = []) {
-  return parts.map((part) => ({
-    partNumber: String(part.partNumber ?? ""),
-    name: String(part.name ?? ""),
-    revision: String(part.revision ?? "A"),
-    quantity: Number(part.quantity ?? 1),
-    lifecycle: String(part.lifecycle ?? "IN_WORK"),
-  }));
+const DEFAULT_PLM = [
+  {
+    part_number: "MOTOR-001",
+    name: "Servo Motor",
+    revision: "B",
+    quantity: 1,
+    lifecycle: "RELEASED",
+  },
+  {
+    part_number: "STAGE-002",
+    name: "Linear Stage",
+    revision: "B",
+    quantity: 1,
+    lifecycle: "RELEASED",
+  },
+];
+
+
+const PART_CATALOG = [
+  { part_number: "MOTOR-001", name: "Servo Motor" },
+  { part_number: "STAGE-002", name: "Linear Stage" },
+  { part_number: "BEARING-004", name: "Precision Bearing" },
+  { part_number: "SENSOR-007", name: "Position Sensor" },
+  { part_number: "CABLE-011", name: "Feedback Cable" },
+  { part_number: "PLATE-012", name: "Mounting Plate" },
+  { part_number: "GUIDE-013", name: "Linear Guide" },
+  { part_number: "ENCODER-014", name: "Rotary Encoder" },
+  { part_number: "BRACKET-015", name: "Motor Bracket" },
+  { part_number: "CONTROLLER-016", name: "Motion Controller" },
+  { part_number: "DRIVE-017", name: "Servo Drive" },
+  { part_number: "FASTENER-018", name: "Precision Fastener" },
+];
+
+const LIFE_CYCLE_OPTIONS = ["RELEASED", "IN_REVIEW", "DRAFT", "OBSOLETE"];
+
+function emptyPart() {
+  return {
+    part_number: "",
+    name: "",
+    revision: "",
+    quantity: 1,
+    lifecycle: "RELEASED",
+  };
 }
 
-function normalizeImportedPart(part) {
+function normalizeRow(row = {}) {
   return {
-    partNumber: String(
-      part.partNumber ??
-        part.part_number ??
-        part["Part Number"] ??
-        part["part number"] ??
-        ""
-    ),
-    name: String(part.name ?? part.Name ?? ""),
-    revision: String(part.revision ?? part.Revision ?? "A"),
-    quantity: Number(part.quantity ?? part.Quantity ?? part.qty ?? part.Qty ?? 1),
-    lifecycle: String(
-      part.lifecycle ??
-        part.lifecycle_state ??
-        part.Lifecycle ??
-        part["Lifecycle State"] ??
-        "IN_WORK"
-    ),
+    part_number: row.part_number ?? row.partNumber ?? "",
+    name: row.name ?? "",
+    revision: row.revision ?? row.rev ?? "",
+    quantity: Number(row.quantity ?? row.qty ?? 1) || 1,
+    lifecycle: row.lifecycle ?? "RELEASED",
   };
+}
+
+function seedRows(rows, fallback) {
+  const source = Array.isArray(rows) && rows.length ? rows : fallback;
+  return source.slice(0, 2).map(normalizeRow);
 }
 
 function parseCsv(text) {
@@ -58,580 +84,574 @@ function parseCsv(text) {
     .map((line) => line.trim())
     .filter(Boolean);
 
-  if (lines.length < 2) {
-    throw new Error("CSV needs a header row and at least one part.");
-  }
+  if (!lines.length) return [];
 
-  const headers = lines[0].split(",").map((value) => value.trim());
+  const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
 
   return lines.slice(1).map((line) => {
-    const values = line.split(",").map((value) => value.trim());
+    const cols = line.split(",").map((c) => c.trim());
     const row = {};
     headers.forEach((header, index) => {
-      row[header] = values[index] ?? "";
+      row[header] = cols[index] ?? "";
     });
-    return normalizeImportedPart(row);
+    return normalizeRow({
+      part_number: row.part_number,
+      name: row.name,
+      revision: row.revision,
+      quantity: row.quantity,
+      lifecycle: row.lifecycle,
+    });
   });
 }
 
-async function readPartsFile(file) {
-  const text = await file.text();
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+}
 
-  if (file.name.toLowerCase().endsWith(".json")) {
-    const parsed = JSON.parse(text);
-    const rows = Array.isArray(parsed) ? parsed : parsed.parts;
 
-    if (!Array.isArray(rows)) {
-      throw new Error('JSON must be an array or contain a "parts" array.');
+function buildWorkspaceValidation(engineeringRows, plmRows, apiData = {}) {
+  const engineering = Array.isArray(engineeringRows)
+    ? engineeringRows.filter((row) => row?.part_number)
+    : [];
+
+  const plm = Array.isArray(plmRows)
+    ? plmRows.filter((row) => row?.part_number)
+    : [];
+
+  const results = [];
+  const defects = [];
+
+  engineering.forEach((eng, index) => {
+    const target = plm.find(
+      (row) => row.part_number === eng.part_number
+    );
+
+    const issues = [];
+
+    if (!target) {
+      issues.push({
+        type: "Missing In PLM",
+        expected: "Part exists in PLM",
+        actual: "Part missing",
+        severity: "HIGH",
+      });
+    } else {
+      if (String(eng.revision) !== String(target.revision)) {
+        issues.push({
+          type: "Revision Mismatch",
+          expected: String(eng.revision),
+          actual: String(target.revision),
+          severity: "HIGH",
+        });
+      }
+
+      if (Number(eng.quantity) !== Number(target.quantity)) {
+        issues.push({
+          type: "Quantity Mismatch",
+          expected: String(eng.quantity),
+          actual: String(target.quantity),
+          severity: "MEDIUM",
+        });
+      }
+
+      if (String(eng.lifecycle) !== String(target.lifecycle)) {
+        issues.push({
+          type: "Lifecycle Mismatch",
+          expected: String(eng.lifecycle),
+          actual: String(target.lifecycle),
+          severity: "MEDIUM",
+        });
+      }
     }
 
-    return rows.map(normalizeImportedPart);
-  }
+    const passed = issues.length === 0;
+    const mainIssue = issues[0];
 
-  if (file.name.toLowerCase().endsWith(".csv")) {
-    return parseCsv(text);
-  }
+    results.push({
+      id: `RESULT-${index + 1}`,
 
-  throw new Error("Use a .csv or .json file.");
+      part_number: eng.part_number,
+      partNumber: eng.part_number,
+      name: eng.name,
+
+      revision: eng.revision,
+      quantity: eng.quantity,
+      lifecycle: eng.lifecycle,
+
+      aligned: passed,
+      passed,
+
+      status: passed ? "PASS" : "FAIL",
+      result: passed ? "PASS" : "FAIL",
+
+      dataState: passed ? "Aligned" : "Mismatch",
+      data_state: passed ? "Aligned" : "Mismatch",
+
+      defectType: mainIssue?.type ?? null,
+      defect_type: mainIssue?.type ?? null,
+
+      expected:
+        mainIssue?.expected ??
+        "Engineering and PLM data aligned",
+
+      actual:
+        mainIssue?.actual ??
+        "Engineering and PLM data aligned",
+
+      severity: mainIssue?.severity ?? "PASS",
+
+      issues,
+    });
+
+    issues.forEach((issue) => {
+      const defectNumber = defects.length + 1;
+
+      defects.push({
+        id: `DEF-${String(defectNumber).padStart(4, "0")}`,
+        defect_id: `DEF-${String(defectNumber).padStart(4, "0")}`,
+
+        part_number: eng.part_number,
+        partNumber: eng.part_number,
+        name: eng.name,
+
+        title: `${issue.type}: ${eng.part_number}`,
+
+        type: issue.type,
+        defectType: issue.type,
+        defect_type: issue.type,
+
+        expected: issue.expected,
+        actual: issue.actual,
+
+        severity: issue.severity,
+        status: "OPEN",
+      });
+    });
+  });
+
+  const partsChecked = results.length;
+  const passedParts = results.filter((item) => item.passed).length;
+  const failedParts = partsChecked - passedParts;
+
+  const passPercentage =
+    partsChecked > 0
+      ? Math.round((passedParts / partsChecked) * 100)
+      : 0;
+
+  const source =
+    apiData?.validation ??
+    apiData?.result ??
+    apiData?.data ??
+    apiData ??
+    {};
+
+  return {
+    ...source,
+
+    engineering,
+    engineeringParts: engineering,
+
+    plm,
+    plmParts: plm,
+
+    results,
+    validationResults: results,
+    validation_results: results,
+
+    defects,
+
+    partsChecked,
+    passedParts,
+    failedParts,
+
+    passPercentage,
+    pass_percentage: passPercentage,
+
+    summary: {
+      ...(source?.summary ?? {}),
+
+      partsChecked,
+      passedParts,
+      failedParts,
+
+      parts_checked: partsChecked,
+      passed_parts: passedParts,
+      failed_parts: failedParts,
+
+      passPercentage,
+      pass_percentage: passPercentage,
+    },
+  };
 }
 
 export default function ValidationInputLab({
-  initialEngineering,
-  initialPlm,
+  initialEngineering = DEFAULT_ENGINEERING,
+  initialPlm = DEFAULT_PLM,
   onValidated,
+  runValidation,
 }) {
-  const sampleEngineering = useMemo(
-    () => cloneParts(initialEngineering),
-    [initialEngineering]
+  const [engineeringRows, setEngineeringRows] = useState(
+    seedRows(initialEngineering, DEFAULT_ENGINEERING)
   );
-  const samplePlm = useMemo(
-    () => cloneParts(initialPlm),
-    [initialPlm]
-  );
+  const [plmRows, setPlmRows] = useState(seedRows(initialPlm, DEFAULT_PLM));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [engineering, setEngineering] = useState(
-    () => cloneParts(initialEngineering)
-  );
-  const [plm, setPlm] = useState(
-    () => cloneParts(initialPlm)
-  );
-  const [running, setRunning] = useState(false);
-  const [message, setMessage] = useState("");
-  const [lastResult, setLastResult] = useState(null);
+  const engineeringFileRef = useRef(null);
+  const plmFileRef = useRef(null);
 
-  const engineeringUpload = useRef(null);
-  const plmUpload = useRef(null);
-
-  useEffect(() => {
-    sessionStorage.setItem(
-      "dt_validation_inputs",
-      JSON.stringify({ engineering, plm })
-    );
-
-    window.dispatchEvent(new Event("dt-inputs-updated"));
-  }, [engineering, plm]);
-
-
-  const updateRow = (side, index, field, value) => {
-    const setter = side === "engineering" ? setEngineering : setPlm;
-
-    setter((current) =>
-      current.map((row, rowIndex) =>
-        rowIndex === index
+  const updateRow = (setter, index, field, value) => {
+    setter((prev) =>
+      prev.map((row, i) =>
+        i === index
           ? {
               ...row,
-              [field]: field === "quantity" ? Number(value) : value,
+              [field]: field === "quantity" ? Number(value || 0) : value,
             }
           : row
       )
     );
   };
 
-  const addRow = (side) => {
-    const setter = side === "engineering" ? setEngineering : setPlm;
-    setter((current) => [...current, { ...EMPTY_PART }]);
+  const removeRow = (setter, rows, index) => {
+    if (rows.length <= 1) return;
+    setter(rows.filter((_, i) => i !== index));
   };
 
-  const deleteRow = (side, index) => {
-    const setter = side === "engineering" ? setEngineering : setPlm;
-    setter((current) =>
-      current.filter((_, rowIndex) => rowIndex !== index)
-    );
-  };
-
-  const importFile = async (side, file) => {
-    if (!file) return;
-
-    try {
-      const rows = await readPartsFile(file);
-
-      if (side === "engineering") {
-        setEngineering(rows);
-      } else {
-        setPlm(rows);
-      }
-
-      setMessage(`${rows.length} ${side} records loaded from ${file.name}.`);
-    } catch (error) {
-      setMessage(error.message);
-    }
+  const addRow = (setter) => {
+    setter((prev) => [...prev, emptyPart()]);
   };
 
   const loadSample = () => {
-    setEngineering(cloneParts(sampleEngineering).slice(0, 3));
-    setPlm(cloneParts(samplePlm).slice(0, 3));
-    setMessage("Sample data restored.");
+    setEngineeringRows(DEFAULT_ENGINEERING);
+    setPlmRows(DEFAULT_PLM);
+    setError("");
   };
 
-  const clearAll = () => {
-    setEngineering([]);
-    setPlm([]);
-    setMessage("Workspace cleared.");
+  const handleImport = async (event, setter) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const text = await readFile(file);
+      let rows = [];
+
+      if (file.name.toLowerCase().endsWith(".json")) {
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)) {
+          rows = parsed.map(normalizeRow);
+        } else if (Array.isArray(parsed.parts)) {
+          rows = parsed.parts.map(normalizeRow);
+        }
+      } else {
+        rows = parseCsv(text);
+      }
+
+      if (rows.length) {
+        setter(rows.slice(0, 2));
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Import failed. Please use CSV or JSON in the correct format.");
+    } finally {
+      event.target.value = "";
+    }
   };
 
-  const validate = async () => {
-    if (engineering.length === 0) {
-      setMessage("Add at least one Engineering/CAD source part.");
-      return;
-    }
+  const goToValidationTab = () => {
+    setTimeout(() => {
+      const candidates = Array.from(
+        document.querySelectorAll("button, [role='tab'], a")
+      );
 
-    const invalid = [...engineering, ...plm].some(
-      (part) =>
-        !part.partNumber.trim() ||
-        !part.revision.trim() ||
-        !part.lifecycle.trim()
-    );
+      const validationTab = candidates.find((element) => {
+        const text = (element.textContent || "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .toLowerCase();
 
-    if (invalid) {
-      setMessage("Part number, revision, and lifecycle are required.");
-      return;
-    }
+        return text === "validation";
+      });
 
-    setRunning(true);
-    setMessage("Running Engineering → PLM comparison...");
+      if (validationTab) {
+        validationTab.click();
+
+        validationTab.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    }, 200);
+  };
+
+  const handleRun = async () => {
+    setLoading(true);
+    setError("");
+
+    const payload = {
+      engineeringParts: engineeringRows,
+      plmParts: plmRows,
+    };
 
     try {
-      const result = await executeCustomValidation(engineering, plm);
-      sessionStorage.setItem(
-        "dt_validation_inputs",
-        JSON.stringify({ engineering, plm })
-      );
-      sessionStorage.setItem(
-        "dt_validation_result",
-        JSON.stringify(result)
-      );
-      setLastResult(result);
-      setMessage(
-        `Validation complete: ${result.summary.passedParts} passed, ${result.summary.failedParts} failed.`
-      );
-      onValidated(result);
-    } catch (error) {
-      console.error(error);
-      setMessage(`Validation failed: ${error.message}`);
+      if (typeof runValidation === "function") {
+        await runValidation(payload);
+      } else if (typeof onValidated === "function") {
+        await onValidated(buildWorkspaceValidation(engineeringRows, plmRows, payload));
+      }
+      goToValidationTab();
+    } catch (err) {
+      console.error(err);
+      setError("Validation failed. Please check the backend connection.");
     } finally {
-      setRunning(false);
+      setLoading(false);
     }
   };
 
+  const renderDataset = (title, subtitle, rows, setter, fileRef, variant) => (
+    <section className={`validation-card validation-card--${variant}`}>
+      <div className="validation-card__image" />
+      <div className="validation-card__inner">
+        <div className="validation-card__header">
+          <div>
+            <h3 className="validation-card__title">{title}</h3>
+            <p className="validation-card__subtitle">{subtitle}</p>
+          </div>
 
-  const csvEscape = (value) => {
-    const text = String(value ?? "");
-    if (/[",\n]/.test(text)) {
-      return `"${text.replace(/"/g, '""')}"`;
-    }
-    return text;
-  };
-
-  const downloadBlob = (filename, content, mimeType) => {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const downloadInputCsv = () => {
-    const rows = [
-      ["source", "part_number", "name", "revision", "quantity", "lifecycle"],
-      ...engineering.map((part) => [
-        "ENGINEERING",
-        part.partNumber,
-        part.name,
-        part.revision,
-        part.quantity,
-        part.lifecycle,
-      ]),
-      ...plm.map((part) => [
-        "PLM",
-        part.partNumber,
-        part.name,
-        part.revision,
-        part.quantity,
-        part.lifecycle,
-      ]),
-    ];
-
-    const csv = rows.map((row) => row.map(csvEscape).join(",")).join("\n");
-    downloadBlob("digital-twin-input-data.csv", csv, "text/csv;charset=utf-8");
-  };
-
-  const downloadResultCsv = () => {
-    if (!lastResult) {
-      setMessage("Run validation first, then download the result.");
-      return;
-    }
-
-    const rows = [
-      ["record_type", "part_number", "status", "issue_type", "expected", "actual", "severity", "defect_id"],
-      ...lastResult.results.map((row) => [
-        "VALIDATION_RESULT",
-        row.partNumber,
-        row.status,
-        row.issueType,
-        row.expected,
-        row.actual,
-        row.severity,
-        "",
-      ]),
-      ...lastResult.defects.map((row) => [
-        "DEFECT",
-        row.partNumber,
-        row.status,
-        row.issueType,
-        row.expected,
-        row.actual,
-        row.severity,
-        row.id,
-      ]),
-    ];
-
-    const csv = rows.map((row) => row.map(csvEscape).join(",")).join("\n");
-    downloadBlob("digital-twin-validation-results.csv", csv, "text/csv;charset=utf-8");
-  };
-
-  const htmlTable = (title, headers, rows) => `
-    <h2>${title}</h2>
-    <table border="1">
-      <thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
-      <tbody>
-        ${rows
-          .map((row) => `<tr>${row.map((cell) => `<td>${String(cell ?? "")}</td>`).join("")}</tr>`)
-          .join("")}
-      </tbody>
-    </table>
-  `;
-
-  const downloadExcel = () => {
-    const inputHeaders = ["Part Number", "Name", "Revision", "Quantity", "Lifecycle"];
-    const engineeringRows = engineering.map((part) => [
-      part.partNumber,
-      part.name,
-      part.revision,
-      part.quantity,
-      part.lifecycle,
-    ]);
-    const plmRows = plm.map((part) => [
-      part.partNumber,
-      part.name,
-      part.revision,
-      part.quantity,
-      part.lifecycle,
-    ]);
-
-    let body = htmlTable("Engineering / CAD Input", inputHeaders, engineeringRows);
-    body += htmlTable("PLM Input", inputHeaders, plmRows);
-
-    if (lastResult) {
-      body += htmlTable(
-        "Validation Summary",
-        ["Parts Checked", "Passed", "Failed", "Pass Rate %"],
-        [[
-          lastResult.summary.partsChecked,
-          lastResult.summary.passedParts,
-          lastResult.summary.failedParts,
-          lastResult.summary.passRate,
-        ]]
-      );
-
-      body += htmlTable(
-        "Validation Results",
-        ["Part Number", "Part Name", "Status", "Issue Type", "Expected", "Actual", "Severity"],
-        lastResult.results.map((row) => [
-          row.partNumber,
-          row.partName,
-          row.status,
-          row.issueType,
-          row.expected,
-          row.actual,
-          row.severity,
-        ])
-      );
-
-      body += htmlTable(
-        "Defects",
-        ["Defect ID", "Part Number", "Title", "Status", "Issue Type", "Expected", "Actual", "Severity"],
-        lastResult.defects.map((row) => [
-          row.id,
-          row.partNumber,
-          row.title,
-          row.status,
-          row.issueType,
-          row.expected,
-          row.actual,
-          row.severity,
-        ])
-      );
-    }
-
-    const html = `<!doctype html><html><head><meta charset="utf-8"></head><body>${body}</body></html>`;
-    downloadBlob("digital-twin-validation-report.xls", html, "application/vnd.ms-excel");
-  };
-
-  return (
-    <section className="input-lab">
-      <div className="input-lab-header">
-        <div>
-          <span className="input-lab-kicker">TEST DATA WORKSPACE</span>
-          <h3>Test your own Engineering and PLM data</h3>
-          <p>
-            Edit values directly or import CSV/JSON files. Engineering/CAD is
-            treated as the expected source definition; PLM is the target being
-            validated.
-          </p>
+          <div className="validation-card__actions">
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".csv,.json"
+              className="validation-hidden-file"
+              onChange={(e) => handleImport(e, setter)}
+            />
+            <button
+              type="button"
+              className="validation-btn"
+              onClick={() => fileRef.current?.click()}
+            >
+              Import
+            </button>
+            <button
+              type="button"
+              className="validation-btn"
+              onClick={() => addRow(setter)}
+            >
+              + Add part
+            </button>
+          </div>
         </div>
 
-        <div className="input-lab-actions">
-          
+        <div className="validation-card__table">
+          <div className="validation-table-head">
+            <div>Part #</div>
+            <div>Name</div>
+            <div>Rev</div>
+            <div>Qty</div>
+            <div>Lifecycle</div>
+            <div />
+          </div>
 
-          
+          {rows.map((row, index) => (
+            <div className="validation-table-row" key={`${title}-${index}`}>
+              <select
+                className="validation-input"
+                value={row.part_number}
+                onChange={(e) => {
+                  const selectedPart = PART_CATALOG.find(
+                    (item) => item.part_number === e.target.value
+                  );
 
-          
+                  setter((currentRows) =>
+                    currentRows.map((currentRow, rowIndex) =>
+                      rowIndex === index
+                        ? {
+                            ...currentRow,
+                            part_number: e.target.value,
+                            name: selectedPart?.name ?? "",
+                          }
+                        : currentRow
+                    )
+                  );
+                }}
+              >
+                <option value="">Select part</option>
+                {PART_CATALOG.map((item) => (
+                  <option key={item.part_number} value={item.part_number}>
+                    {item.part_number}
+                  </option>
+                ))}
+              </select>
 
-          <button
-            className="primary-button compact"
-            onClick={validate}
-            disabled={running}
-          >
-            <Play size={15} />
-            {running ? "Validating..." : "Run my validation"}
-          </button>
+              <select
+                className="validation-input"
+                value={row.name}
+                onChange={(e) => {
+                  const selectedPart = PART_CATALOG.find(
+                    (item) => item.name === e.target.value
+                  );
+
+                  setter((currentRows) =>
+                    currentRows.map((currentRow, rowIndex) =>
+                      rowIndex === index
+                        ? {
+                            ...currentRow,
+                            name: e.target.value,
+                            part_number: selectedPart?.part_number ?? "",
+                          }
+                        : currentRow
+                    )
+                  );
+                }}
+              >
+                <option value="">Select name</option>
+                {PART_CATALOG.map((item) => (
+                  <option key={item.name} value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                className="validation-input"
+                value={row.revision}
+                onChange={(e) =>
+                  updateRow(setter, index, "revision", e.target.value)
+                }
+                placeholder="A"
+              />
+              <input
+                className="validation-input"
+                type="number"
+                min="1"
+                value={row.quantity}
+                onChange={(e) =>
+                  updateRow(setter, index, "quantity", e.target.value)
+                }
+              />
+              <select
+                className="validation-select"
+                value={row.lifecycle}
+                onChange={(e) =>
+                  updateRow(setter, index, "lifecycle", e.target.value)
+                }
+              >
+                {LIFE_CYCLE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="validation-remove"
+                onClick={() => removeRow(setter, rows, index)}
+                title="Remove row"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
         </div>
-      </div>
-
-      <div className="input-grid">
-        <PartEditor
-          title="Engineering / CAD Source"
-          subtitle="Expected product definition"
-          rows={engineering}
-          side="engineering"
-          onChange={updateRow}
-          onAdd={addRow}
-          onDelete={deleteRow}
-          onUpload={() => engineeringUpload.current?.click()}
-        />
-
-        <PartEditor
-          title="PLM Target"
-          subtitle="Downstream data to validate"
-          rows={plm}
-          side="plm"
-          onChange={updateRow}
-          onAdd={addRow}
-          onDelete={deleteRow}
-          onUpload={() => plmUpload.current?.click()}
-        />
-      </div>
-
-      <input
-        ref={engineeringUpload}
-        className="hidden-file-input"
-        type="file"
-        accept=".csv,.json"
-        onChange={(event) =>
-          importFile("engineering", event.target.files?.[0])
-        }
-      />
-
-      <input
-        ref={plmUpload}
-        className="hidden-file-input"
-        type="file"
-        accept=".csv,.json"
-        onChange={(event) =>
-          importFile("plm", event.target.files?.[0])
-        }
-      />
-
-      <div className="input-lab-footer">
-        <div className="file-help">
-          <FileSpreadsheet size={15} />
-          CSV:
-          <code>part_number,name,revision,quantity,lifecycle</code>
-        </div>
-
-        <div className="file-help">
-          <FileJson size={15} />
-          JSON: array of parts or <code>{"{ parts: [...] }"}</code>
-        </div>
-
-        {message && (
-          <div className="input-lab-message">{message}</div>
-        )}
       </div>
     </section>
   );
-}
 
-function PartEditor({
-  title,
-  subtitle,
-  rows,
-  side,
-  onChange,
-  onAdd,
-  onDelete,
-  onUpload,
-}) {
   return (
-    <div className="part-editor">
-      <div className="part-editor-header">
+    <section className="validation-lab-clean">
+      <div className="validation-lab-clean__top">
         <div>
-          <strong>{title}</strong>
-          <span>{subtitle}</span>
+          <div className="validation-lab-clean__eyebrow">Test data workspace</div>
+          <h2 className="validation-lab-clean__title">
+            Test your own Engineering and PLM data
+          </h2>
+          <p className="validation-lab-clean__desc">
+            Clean 2-column workspace with only 2 default rows on each side.
+            Engineering/CAD is the expected source definition and PLM is the
+            target being validated.
+          </p>
         </div>
 
-        <div>
-          <button className="editor-icon-button" onClick={onUpload}>
-            <Upload size={14} />
-            Import
-          </button>
-
+        <div className="validation-lab-clean__run">
           <button
-            className="editor-icon-button"
-            onClick={() => onAdd(side)}
+            type="button"
+            className="validation-btn validation-btn--primary"
+            style={{ width: "100%" }}
+            onClick={handleRun}
+            disabled={loading}
           >
-            <Plus size={14} />
-            Add part
+            {loading ? "Running..." : "Run my validation"}
           </button>
+
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            <button
+              type="button"
+              className="validation-btn"
+              onClick={loadSample}
+              style={{ flex: 1 }}
+            >
+              Load sample
+            </button>
+            <button
+              type="button"
+              className="validation-btn validation-btn--danger"
+              onClick={() => {
+                setEngineeringRows(seedRows([], DEFAULT_ENGINEERING));
+                setPlmRows(seedRows([], DEFAULT_PLM));
+                setError("");
+              }}
+              style={{ flex: 1 }}
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="editable-table-wrap">
-        <table className="editable-table">
-          <thead>
-            <tr>
-              <th>Part #</th>
-              <th>Name</th>
-              <th>Rev</th>
-              <th>Qty</th>
-              <th>Lifecycle</th>
-              <th />
-            </tr>
-          </thead>
+      <div className="validation-lab-clean__grid">
+        {renderDataset(
+          "Engineering / CAD Source",
+          "Expected product definition",
+          engineeringRows,
+          setEngineeringRows,
+          engineeringFileRef,
+          "engineering"
+        )}
 
-          <tbody>
-            {rows.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="empty-table-cell">
-                  No records. Add a part or import a file.
-                </td>
-              </tr>
-            ) : (
-              rows.map((part, index) => (
-                <tr key={`${side}-${index}`}>
-                  <td>
-                    <input
-                      value={part.partNumber}
-                      onChange={(event) =>
-                        onChange(
-                          side,
-                          index,
-                          "partNumber",
-                          event.target.value
-                        )
-                      }
-                      placeholder="MOTOR-001"
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      value={part.name}
-                      onChange={(event) =>
-                        onChange(side, index, "name", event.target.value)
-                      }
-                      placeholder="Servo Motor"
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      value={part.revision}
-                      onChange={(event) =>
-                        onChange(
-                          side,
-                          index,
-                          "revision",
-                          event.target.value
-                        )
-                      }
-                      placeholder="A"
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      value={part.quantity}
-                      onChange={(event) =>
-                        onChange(
-                          side,
-                          index,
-                          "quantity",
-                          event.target.value
-                        )
-                      }
-                    />
-                  </td>
-
-                  <td>
-                    <select
-                      value={part.lifecycle}
-                      onChange={(event) =>
-                        onChange(
-                          side,
-                          index,
-                          "lifecycle",
-                          event.target.value
-                        )
-                      }
-                    >
-                      <option value="IN_WORK">IN_WORK</option>
-                      <option value="IN_REVIEW">IN_REVIEW</option>
-                      <option value="RELEASED">RELEASED</option>
-                      <option value="OBSOLETE">OBSOLETE</option>
-                    </select>
-                  </td>
-
-                  <td>
-                    <button
-                      className="row-delete-button"
-                      onClick={() => onDelete(side, index)}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        {renderDataset(
+          "PLM Target",
+          "Downstream data to validate",
+          plmRows,
+          setPlmRows,
+          plmFileRef,
+          "plm"
+        )}
       </div>
-    </div>
+
+      {error ? <div className="validation-error">{error}</div> : null}
+
+      <div className="validation-note">
+        CSV format: <strong>part_number,name,revision,quantity,lifecycle</strong>
+      </div>
+    </section>
   );
 }

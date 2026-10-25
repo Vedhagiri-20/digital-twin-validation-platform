@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+:root {
+  --black: #000000;
+  --black-soft: #050505;
+  --forest: #06110C;
+  --forest-accent: #0E2A1D;
+  --crimson: #A31C1B;
+  --ivory: #F3EFE7;
+  --muted: #B9B7B1;
+  --line: #202522;
+}
+
+html,
+body,
+#root {
+  background: #000000 !important;
+  color: var(--ivory) !important;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+}
+
+* {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+}
+
+body {
+  background: #000000 !important;
+}
+
+main,
+section,
+article,
+.app-shell,
+.workspace-shell,
+.demo-shell,
+.dashboard-shell,
+.page,
+.page-wrapper,
+.content-wrapper {
+  background: #000000 !important;
+}
+
+header,
+.site-header,
+.topbar,
+.navbar {
+  background: #06110C !important;
+  border-bottom: 1px solid #1E2A24 !important;
+}
+
+.panel,
+.card,
+.validation-lab-clean,
+.validation-card,
+.live-bom,
+.validation-export-bar,
+.metric-card,
+.summary-card,
+.stat-card,
+.overview-card {
+  background: #050505 !important;
+  border-color: #202522 !important;
+  box-shadow: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #F3EFE7 !important;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
+}
+
+h1 {
+  font-size: clamp(48px, 5vw, 76px) !important;
+  line-height: 0.98 !important;
+}
+
+h2 {
+  font-size: 34px !important;
+  line-height: 1.1 !important;
+}
+
+h3 {
+  font-size: 26px !important;
+  line-height: 1.15 !important;
+}
+
+p {
+  color: #B9B7B1 !important;
+  font-size: 18px !important;
+  line-height: 1.55 !important;
+}
+
+span,
+label,
+small,
+td,
+th,
+li,
+a {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+}
+
+small,
+label,
+.eyebrow,
+.overline,
+[class*="kicker"] {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+}
+
+button,
+.btn,
+.validation-btn,
+.nav-link-button {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+
+  color: #F3EFE7 !important;
+  background: #06110C !important;
+
+  border: 1px solid #294337 !important;
+  border-radius: 8px !important;
+
+  box-shadow: none !important;
+}
+
+button:hover,
+.btn:hover,
+.validation-btn:hover {
+  background: #0E2A1D !important;
+  border-color: #4C7462 !important;
+}
+
+input,
+select,
+textarea,
+.validation-input,
+.validation-select {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+
+  font-size: 18px !important;
+  font-weight: 600 !important;
+
+  color: #F3EFE7 !important;
+  background: #080A09 !important;
+
+  border: 1px solid #272D29 !important;
+  border-radius: 8px !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #4E7865 !important;
+  box-shadow: 0 0 0 2px rgba(78,120,101,.12) !important;
+}
+
+table,
+tbody,
+thead,
+tr {
+  background: #000000 !important;
+}
+
+th {
+  color: #8EB4A3 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+td {
+  color: #F3EFE7 !important;
+  font-size: 17px !important;
+}
+
+.validation-table-row {
+  background: #050505 !important;
+  border-color: #202522 !important;
+}
+
+.validation-card__image {
+  opacity: 0.18 !important;
+}
+
+.tab,
+.nav-tab,
+.sidebar-tab,
+.workspace-tab {
+  background: #000000 !important;
+  color: #B9B7B1 !important;
+}
+
+.tab.active,
+.nav-tab.active,
+.sidebar-tab.active,
+.workspace-tab.active,
+button[class*="tab"].active {
+  background: #06110C !important;
+  color: #F3EFE7 !important;
+  border-color: #315444 !important;
+}
+
+.status-fail,
+.mismatch,
+.severity-high,
+.badge-high,
+.live-bom-state.mismatch {
+  color: #E06B66 !important;
+}
+
+.status-pass,
+.badge-pass,
+.live-bom-state.aligned {
+  color: #8FB8A4 !important;
+}
+
+.row-delete-button,
+.validation-remove {
+  color: #EAA29E !important;
+  background: rgba(163,28,27,.12) !important;
+  border-color: rgba(163,28,27,.35) !important;
+}
+
+::selection {
+  background: #A31C1B;
+  color: #F3EFE7;
+}

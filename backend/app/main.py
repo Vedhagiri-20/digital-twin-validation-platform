@@ -22,6 +22,7 @@ frontend_origin = os.getenv("FRONTEND_ORIGIN", "").strip()
 allowed_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://digital-twin-validation-platform.onrender.com",
 ]
 
 if frontend_origin:

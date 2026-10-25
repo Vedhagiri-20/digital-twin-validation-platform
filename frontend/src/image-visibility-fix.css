@@ -1,0 +1,126 @@
+/* =========================================================
+   MAKE CAD / PLM CARD IMAGE CLEARLY VISIBLE
+   ========================================================= */
+
+/* Keep the card dark */
+.validation-card,
+.validation-section-card,
+.validation-dataset-card,
+.dataset-card {
+  position: relative !important;
+  overflow: hidden !important;
+
+  background-color: #121416 !important;
+  background-blend-mode: normal !important;
+}
+
+/* If the image is attached directly to the card */
+.validation-card,
+.validation-section-card,
+.validation-dataset-card,
+.dataset-card {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+
+  filter: none !important;
+}
+
+/* Image layer */
+.validation-card::before,
+.validation-section-card::before,
+.validation-dataset-card::before,
+.dataset-card::before {
+  opacity: 0.58 !important;
+
+  filter:
+    brightness(1.10)
+    contrast(1.15)
+    saturate(1.05) !important;
+
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+
+  mix-blend-mode: normal !important;
+}
+
+/* Remove the heavy wash currently hiding the picture */
+.validation-card::after,
+.validation-section-card::after,
+.validation-dataset-card::after,
+.dataset-card::after {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,0.28) 0%,
+      rgba(0,0,0,0.16) 48%,
+      rgba(0,0,0,0.26) 100%
+    ) !important;
+
+  opacity: 1 !important;
+}
+
+/* Dedicated image/header areas */
+.validation-card__visual,
+.validation-section-card__visual,
+.validation-card__hero,
+.dataset-card__visual,
+.dataset-card__header {
+  opacity: 1 !important;
+
+  background-color: #121416 !important;
+  background-blend-mode: normal !important;
+
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+
+  filter:
+    brightness(1.08)
+    contrast(1.12) !important;
+}
+
+/* If there is an overlay DIV inside the image area */
+.validation-card__visual-overlay,
+.validation-card__overlay,
+.dataset-card__overlay,
+.validation-section-card__overlay {
+  background: rgba(0,0,0,0.20) !important;
+  opacity: 1 !important;
+}
+
+/* Actual <img> element, if your component uses one */
+.validation-card img,
+.validation-section-card img,
+.validation-dataset-card img,
+.dataset-card img {
+  opacity: 0.72 !important;
+
+  filter:
+    brightness(1.08)
+    contrast(1.12)
+    saturate(1.05) !important;
+
+  object-fit: cover !important;
+}
+
+/* Keep all form content above image */
+.validation-card > *,
+.validation-section-card > *,
+.validation-dataset-card > *,
+.dataset-card > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Input rows still need enough contrast */
+.validation-table-row,
+.validation-row,
+.validation-item-row {
+  background: rgba(12,14,15,0.90) !important;
+
+  backdrop-filter: blur(2px) !important;
+
+  border: 1px solid rgba(130,150,142,0.22) !important;
+}

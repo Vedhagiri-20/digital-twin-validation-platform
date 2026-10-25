@@ -1,0 +1,809 @@
+/* =========================================================
+   DIGITAL TWIN VALIDATION PLATFORM
+   FINAL INDUSTRY UI SYSTEM
+   Typography + colors + spacing only
+   ========================================================= */
+
+:root {
+  --bg: #0b1115;
+  --bg-deep: #07100c;
+
+  --surface: #10171b;
+  --surface-2: #131c21;
+  --surface-3: #172126;
+
+  --border: #26363d;
+  --border-soft: rgba(130, 155, 150, 0.18);
+
+  --text: #f3f6f4;
+  --text-secondary: #c3cbc7;
+  --text-muted: #8e9c96;
+
+  --green: #67ad98;
+  --green-strong: #83c5af;
+  --green-dark: #0b2219;
+
+  --red: #b83a34;
+  --amber: #d4a14a;
+
+  --font-ui:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+
+  background-color: var(--bg) !important;
+
+  font-family: var(--font-ui) !important;
+  color: var(--text) !important;
+
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+
+body {
+  background-image:
+    linear-gradient(rgba(110, 140, 145, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110, 140, 145, 0.05) 1px, transparent 1px) !important;
+
+  background-size: 32px 32px !important;
+  background-attachment: fixed !important;
+}
+
+#root {
+  background: transparent !important;
+}
+
+
+/* =========================================================
+   TYPOGRAPHY — REMOVE DECORATIVE SERIF EVERYWHERE
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+label,
+small,
+strong,
+button,
+input,
+select,
+textarea,
+a {
+  font-family: var(--font-ui) !important;
+}
+
+h1 {
+  font-size: clamp(46px, 5vw, 68px) !important;
+  line-height: 1.03 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.035em !important;
+}
+
+h2 {
+  font-size: clamp(30px, 3vw, 42px) !important;
+  line-height: 1.12 !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.025em !important;
+}
+
+h3 {
+  font-size: 24px !important;
+  line-height: 1.25 !important;
+  font-weight: 650 !important;
+}
+
+h4 {
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+}
+
+p {
+  font-size: 16px !important;
+  line-height: 1.65 !important;
+  color: var(--text-secondary) !important;
+}
+
+
+/* =========================================================
+   HEADER / NAVIGATION
+   ========================================================= */
+
+header,
+nav {
+  font-family: var(--font-ui) !important;
+}
+
+nav a,
+header a,
+.nav-link-button {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+
+  color: #d8dfdc !important;
+}
+
+nav a:hover,
+header a:hover,
+.nav-link-button:hover {
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   ALL BUTTONS — ONE CONSISTENT STANDARD
+   ========================================================= */
+
+button,
+.btn,
+.validation-btn,
+.nav-link-button,
+.export-btn {
+  font-family: var(--font-ui) !important;
+
+  font-size: 14px !important;
+  font-weight: 600 !important;
+
+  letter-spacing: 0 !important;
+
+  min-height: 44px !important;
+  padding: 0 18px !important;
+
+  border-radius: 8px !important;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease !important;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar-tab,
+.workspace-tab,
+[role="tab"] {
+  min-height: 48px !important;
+
+  padding: 0 16px !important;
+
+  font-family: var(--font-ui) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+
+  color: #dbe2de !important;
+
+  border-radius: 8px !important;
+}
+
+.sidebar-tab svg,
+.workspace-tab svg,
+[role="tab"] svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+
+/* =========================================================
+   SECTION LABELS
+   ========================================================= */
+
+[class*="eyebrow"],
+[class*="kicker"],
+.industry-flow__eyebrow,
+.industry-flow__stage-number,
+.industry-flow__checks-label {
+  font-family: var(--font-ui) !important;
+
+  font-size: 12px !important;
+  line-height: 1 !important;
+
+  font-weight: 700 !important;
+
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+
+  color: var(--green-strong) !important;
+}
+
+
+/* =========================================================
+   NEW VALIDATION FLOW CAROUSEL
+   ========================================================= */
+
+.industry-flow {
+  color: var(--text) !important;
+}
+
+.industry-flow__intro h2 {
+  font-family: var(--font-ui) !important;
+
+  font-size: clamp(34px, 4vw, 48px) !important;
+  line-height: 1.08 !important;
+
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+
+  color: var(--text) !important;
+}
+
+.industry-flow__intro p {
+  font-size: 17px !important;
+  line-height: 1.65 !important;
+
+  color: var(--text-secondary) !important;
+}
+
+
+/* =========================================================
+   CAROUSEL TOP STAGE BUTTONS
+   Fix tiny 01/02/03/04 issue
+   ========================================================= */
+
+.industry-flow__progress {
+  gap: 10px !important;
+}
+
+.industry-flow__progress-item {
+  min-height: 72px !important;
+
+  padding: 12px 16px !important;
+
+  background: rgba(8, 18, 14, 0.82) !important;
+
+  border: 1px solid #29443a !important;
+  border-radius: 9px !important;
+
+  color: var(--text-secondary) !important;
+}
+
+.industry-flow__progress-item span {
+  display: block !important;
+
+  margin-bottom: 5px !important;
+
+  font-family: var(--font-ui) !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+
+  line-height: 1 !important;
+
+  color: #75a997 !important;
+}
+
+.industry-flow__progress-item strong {
+  font-family: var(--font-ui) !important;
+
+  font-size: 14px !important;
+  font-weight: 600 !important;
+
+  line-height: 1.25 !important;
+
+  color: #d7dfdb !important;
+}
+
+.industry-flow__progress-item:hover {
+  background: #10231b !important;
+  border-color: #4d806d !important;
+}
+
+.industry-flow__progress-item--active {
+  background: #10271d !important;
+  border-color: #65a88f !important;
+}
+
+.industry-flow__progress-item--active strong {
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   MAIN CAROUSEL CARD
+   ========================================================= */
+
+.industry-flow__stage {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(13, 22, 19, 0.98),
+      rgba(14, 20, 22, 0.98)
+    ) !important;
+
+  border: 1px solid #2d4039 !important;
+
+  border-radius: 16px !important;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.22) !important;
+}
+
+
+/* =========================================================
+   REMOVE DECORATIVE RED STAGE NUMBER
+   ========================================================= */
+
+.industry-flow__icon,
+.industry-flow__icon--green,
+.industry-flow__icon--red {
+  width: 48px !important;
+  height: 48px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: var(--green-dark) !important;
+
+  border: 1px solid #35614f !important;
+  border-radius: 9px !important;
+
+  color: var(--green-strong) !important;
+
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+
+/* =========================================================
+   CAROUSEL COPY
+   ========================================================= */
+
+.industry-flow__stage-copy h3 {
+  margin-bottom: 8px !important;
+
+  font-family: var(--font-ui) !important;
+
+  font-size: clamp(30px, 3vw, 42px) !important;
+  line-height: 1.1 !important;
+
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+
+  color: var(--text) !important;
+}
+
+.industry-flow__stage-copy h4 {
+  margin-bottom: 16px !important;
+
+  font-family: var(--font-ui) !important;
+
+  font-size: 16px !important;
+  font-weight: 600 !important;
+
+  color: var(--green-strong) !important;
+}
+
+.industry-flow__stage-copy p {
+  font-family: var(--font-ui) !important;
+
+  font-size: 16px !important;
+  line-height: 1.65 !important;
+
+  color: var(--text-secondary) !important;
+}
+
+
+/* =========================================================
+   VALIDATION SCOPE PANEL
+   ========================================================= */
+
+.industry-flow__checks {
+  padding: 26px !important;
+
+  background: #0c1311 !important;
+
+  border: 1px solid #293c35 !important;
+  border-radius: 12px !important;
+}
+
+.industry-flow__check {
+  min-height: 48px !important;
+
+  font-family: var(--font-ui) !important;
+
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+
+  color: #d2dad6 !important;
+}
+
+.industry-flow__check-mark {
+  background: #103124 !important;
+  color: #86c9ae !important;
+}
+
+
+/* =========================================================
+   LEFT / RIGHT ARROWS
+   ========================================================= */
+
+.industry-flow__arrow {
+  width: 48px !important;
+  height: 48px !important;
+
+  min-height: 48px !important;
+  padding: 0 !important;
+
+  background: #0b1c15 !important;
+
+  border: 1px solid #315847 !important;
+
+  color: #e5ebe8 !important;
+}
+
+.industry-flow__arrow:hover {
+  background: #123024 !important;
+  border-color: #66aa91 !important;
+}
+
+
+/* =========================================================
+   CAROUSEL FOOTER
+   ========================================================= */
+
+.industry-flow__footer {
+  font-family: var(--font-ui) !important;
+
+  font-size: 12px !important;
+
+  color: var(--text-muted) !important;
+}
+
+.industry-flow__dot {
+  background: #34443d !important;
+}
+
+.industry-flow__dot--active {
+  background: var(--green) !important;
+}
+
+
+/* =========================================================
+   DATA / VALIDATION / DEFECT TEXT
+   ========================================================= */
+
+.validation-result-row,
+.validation-row,
+.result-row,
+.defect-card,
+.validation-export-bar,
+.export-panel {
+  font-family: var(--font-ui) !important;
+}
+
+.validation-result-row strong,
+.validation-row strong,
+.result-row strong {
+  font-size: 15px !important;
+  font-weight: 650 !important;
+}
+
+.validation-result-row small,
+.validation-row small,
+.result-row small {
+  font-size: 13px !important;
+}
+
+.defect-card h3,
+.defect-card [class*="title"] {
+  font-family: var(--font-ui) !important;
+
+  font-size: 16px !important;
+  font-weight: 650 !important;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+input,
+select,
+textarea {
+  font-family: var(--font-ui) !important;
+
+  font-size: 15px !important;
+  font-weight: 500 !important;
+
+  color: var(--text) !important;
+}
+
+
+/* =========================================================
+   RED IS ONLY FOR REAL ERRORS / DEFECTS
+   ========================================================= */
+
+.error,
+.error-text,
+.severity-high,
+[class*="severity-high"] {
+  color: #e77d77 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .industry-flow__progress {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .industry-flow__progress-item strong {
+    font-size: 13px !important;
+  }
+
+  h1 {
+    font-size: 44px !important;
+  }
+
+}
+
+/* =========================================================
+   TESTING AREA ONLY
+   Full black cards + visible background image
+   ========================================================= */
+
+/* Main Engineering / PLM cards */
+.validation-input-lab .validation-side-card,
+.validation-input-lab .validation-source-card,
+.validation-input-lab .validation-target-card,
+.validation-input-lab .workspace-card,
+.validation-input-lab .data-card,
+.validation-workspace .validation-side-card,
+.validation-workspace .validation-source-card,
+.validation-workspace .validation-target-card,
+.validation-workspace .workspace-card,
+.validation-workspace .data-card {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  background: #000000 !important;
+  border: 1px solid rgba(109, 162, 144, 0.18) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* Background image inside the testing cards */
+.validation-input-lab .validation-side-card::before,
+.validation-input-lab .validation-source-card::before,
+.validation-input-lab .validation-target-card::before,
+.validation-input-lab .workspace-card::before,
+.validation-input-lab .data-card::before,
+.validation-workspace .validation-side-card::before,
+.validation-workspace .validation-source-card::before,
+.validation-workspace .validation-target-card::before,
+.validation-workspace .workspace-card::before,
+.validation-workspace .data-card::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38)),
+    url("./assets/cad_to_plm_validation_flow.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+
+  opacity: 0.42 !important;
+  filter: brightness(1.08) contrast(1.08) saturate(1.05) !important;
+  pointer-events: none !important;
+}
+
+/* Keep content above the image */
+.validation-input-lab .validation-side-card > *,
+.validation-input-lab .validation-source-card > *,
+.validation-input-lab .validation-target-card > *,
+.validation-input-lab .workspace-card > *,
+.validation-input-lab .data-card > *,
+.validation-workspace .validation-side-card > *,
+.validation-workspace .validation-source-card > *,
+.validation-workspace .validation-target-card > *,
+.validation-workspace .workspace-card > *,
+.validation-workspace .data-card > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Rows should remain readable */
+.validation-input-lab .validation-row,
+.validation-input-lab .validation-table-row,
+.validation-input-lab .table-row,
+.validation-workspace .validation-row,
+.validation-workspace .validation-table-row,
+.validation-workspace .table-row {
+  background: rgba(0, 0, 0, 0.78) !important;
+  border: 1px solid rgba(109, 162, 144, 0.16) !important;
+  backdrop-filter: blur(1px) !important;
+}
+
+/* Inputs inside rows */
+.validation-input-lab input,
+.validation-input-lab select,
+.validation-workspace input,
+.validation-workspace select {
+  background: rgba(0, 0, 0, 0.88) !important;
+  color: #f3f6f4 !important;
+  border: 1px solid rgba(109, 162, 144, 0.20) !important;
+}
+
+/* Headings remain clear */
+.validation-input-lab h2,
+.validation-input-lab h3,
+.validation-input-lab h4,
+.validation-workspace h2,
+.validation-workspace h3,
+.validation-workspace h4 {
+  color: #f3f6f4 !important;
+}
+
+/* Subtext */
+.validation-input-lab p,
+.validation-input-lab small,
+.validation-workspace p,
+.validation-workspace small {
+  color: #c7d0cb !important;
+}
+
+
+/* =========================================================
+   TESTING AREA ONLY
+   Full black cards + visible background image
+   ========================================================= */
+
+/* Main Engineering / PLM cards */
+.validation-input-lab .validation-side-card,
+.validation-input-lab .validation-source-card,
+.validation-input-lab .validation-target-card,
+.validation-input-lab .workspace-card,
+.validation-input-lab .data-card,
+.validation-workspace .validation-side-card,
+.validation-workspace .validation-source-card,
+.validation-workspace .validation-target-card,
+.validation-workspace .workspace-card,
+.validation-workspace .data-card {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  background: #000000 !important;
+  border: 1px solid rgba(109, 162, 144, 0.18) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* Background image inside the testing cards */
+.validation-input-lab .validation-side-card::before,
+.validation-input-lab .validation-source-card::before,
+.validation-input-lab .validation-target-card::before,
+.validation-input-lab .workspace-card::before,
+.validation-input-lab .data-card::before,
+.validation-workspace .validation-side-card::before,
+.validation-workspace .validation-source-card::before,
+.validation-workspace .validation-target-card::before,
+.validation-workspace .workspace-card::before,
+.validation-workspace .data-card::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38)),
+    url("./assets/cad_to_plm_validation_flow.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+
+  opacity: 0.42 !important;
+  filter: brightness(1.08) contrast(1.08) saturate(1.05) !important;
+  pointer-events: none !important;
+}
+
+/* Keep content above the image */
+.validation-input-lab .validation-side-card > *,
+.validation-input-lab .validation-source-card > *,
+.validation-input-lab .validation-target-card > *,
+.validation-input-lab .workspace-card > *,
+.validation-input-lab .data-card > *,
+.validation-workspace .validation-side-card > *,
+.validation-workspace .validation-source-card > *,
+.validation-workspace .validation-target-card > *,
+.validation-workspace .workspace-card > *,
+.validation-workspace .data-card > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Rows should remain readable */
+.validation-input-lab .validation-row,
+.validation-input-lab .validation-table-row,
+.validation-input-lab .table-row,
+.validation-workspace .validation-row,
+.validation-workspace .validation-table-row,
+.validation-workspace .table-row {
+  background: rgba(0, 0, 0, 0.78) !important;
+  border: 1px solid rgba(109, 162, 144, 0.16) !important;
+  backdrop-filter: blur(1px) !important;
+}
+
+/* Inputs inside rows */
+.validation-input-lab input,
+.validation-input-lab select,
+.validation-workspace input,
+.validation-workspace select {
+  background: rgba(0, 0, 0, 0.88) !important;
+  color: #f3f6f4 !important;
+  border: 1px solid rgba(109, 162, 144, 0.20) !important;
+}
+
+/* Headings remain clear */
+.validation-input-lab h2,
+.validation-input-lab h3,
+.validation-input-lab h4,
+.validation-workspace h2,
+.validation-workspace h3,
+.validation-workspace h4 {
+  color: #f3f6f4 !important;
+}
+
+/* Subtext */
+.validation-input-lab p,
+.validation-input-lab small,
+.validation-workspace p,
+.validation-workspace small {
+  color: #c7d0cb !important;
+}
+
+
+/* =========================================================
+   FLOW TOP BUTTONS — NO NUMBERS
+   ========================================================= */
+
+.industry-flow__progress-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.industry-flow__progress-item strong {
+  display: block !important;
+  width: 100% !important;
+
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+
+  color: #e4e9e6 !important;
+}
+
