@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/validation-input-lab.css";
 
 const DEFAULT_ENGINEERING = [
@@ -304,6 +304,51 @@ export default function ValidationInputLab({
 
   const engineeringFileRef = useRef(null);
   const plmFileRef = useRef(null);
+
+  useEffect(() => {
+    const normalizeForStorage = (row = {}) => ({
+      partNumber:
+        row.partNumber ??
+        row.part_number ??
+        "",
+      name: row.name ?? "",
+      revision:
+        row.revision ??
+        row.rev ??
+        "",
+      quantity:
+        Number(
+          row.quantity ??
+          row.qty ??
+          1
+        ) || 1,
+      lifecycle:
+        row.lifecycle ??
+        "RELEASED",
+    });
+
+    const payload = {
+      engineering: engineeringRows.map(normalizeForStorage),
+      plm: plmRows.map(normalizeForStorage),
+    };
+
+    try {
+      sessionStorage.setItem(
+        "dt_validation_inputs",
+        JSON.stringify(payload)
+      );
+
+      window.dispatchEvent(
+        new Event("dt-inputs-updated")
+      );
+    } catch (error) {
+      console.error(
+        "Unable to persist validation inputs:",
+        error
+      );
+    }
+  }, [engineeringRows, plmRows]);
+
 
   const updateRow = (setter, index, field, value) => {
     setter((prev) =>

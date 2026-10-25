@@ -369,7 +369,12 @@ Engineering/CAD and PLM inputs are compared for missing parts, revision, quantit
                 />
                 </>
               )} 
-              {activeTab === "bom" && <LiveBomComparison />} 
+              {activeTab === "bom" && (
+                <LiveBomComparison
+                  engineeringParts={liveEngineeringParts}
+                  plmParts={livePlmParts}
+                />
+              )} 
               {activeTab === "validation" && (
                 <>
                   <ValidationView validation={validation} runValidation={runValidation}/>
